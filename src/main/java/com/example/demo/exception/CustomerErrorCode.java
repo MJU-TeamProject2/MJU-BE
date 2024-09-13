@@ -1,12 +1,13 @@
 package com.example.demo.exception;
 
+import com.example.demo.common.exception.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum ExampleErrorCode implements ErrorCode{
+public enum CustomerErrorCode implements ErrorCode {
 
-	ENTITY1_NOT_FOUND(400, "E001", "엔티티1을 찾을 수 없습니다"),
-	ENTITY2_NOT_FOUND(400, "E002", "엔티티2 찾을 수 없습니다");
+	CUSTOMER_NOT_FOUND(400, "C001", "고객을 찾을 수 없습니다");
 
 	private final int status;
 	private final String code;
