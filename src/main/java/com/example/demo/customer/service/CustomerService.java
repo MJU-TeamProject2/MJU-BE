@@ -14,8 +14,4 @@ import lombok.RequiredArgsConstructor;
 public class CustomerService {
 	private final CustomerRepository customerRepository;
 
-	public GetCustomerResponse findCustomer(String email) {
-		Customer customer = customerRepository.findByEmail(email).orElseThrow(CustomerNotFoundException::new);
-		return GetCustomerResponse.from(customer);
-	}
 }
