@@ -21,6 +21,8 @@ public class CustomerControllerImpl implements CustomerController {
 	@Override
 	@PostMapping("/register")
 	public void register(@RequestBody RegisterRequest registerRequest) {
+		// TODO email format 적용 & 비밀번호 암호화
+		checkEmailDuplicate(registerRequest.email());
 		Customer customer = Customer.builder()
 			.name(registerRequest.name())
 			.age(registerRequest.age())
@@ -31,5 +33,11 @@ public class CustomerControllerImpl implements CustomerController {
 			.deleted(false)
 			.build();
 		customerService.register(customer);
+	}
+
+	private void checkEmailDuplicate(String email) {
+		if(customerService.checkEmailDuplicate(email)) {
+			throw new RuntimeException("이미 가입한 이메일입니다.");
+		}
 	}
 }

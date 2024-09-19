@@ -15,4 +15,8 @@ public class CustomerService {
 	public void register(Customer customer) {
 		customerRepository.save(customer);
 	}
+
+	public boolean checkEmailDuplicate(String email) {
+		return customerRepository.findByEmail(email).isPresent();
+	}
 }
