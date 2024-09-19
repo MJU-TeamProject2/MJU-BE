@@ -1,14 +1,12 @@
 package com.example.demo.customer.entity;
 
-import java.time.LocalDateTime;
-
 import com.example.demo.common.util.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
