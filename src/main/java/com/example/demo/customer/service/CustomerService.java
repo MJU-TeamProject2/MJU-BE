@@ -14,4 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomerService {
 	private final CustomerRepository customerRepository;
 
+	public void register(Customer customer) {
+
+	}
 }

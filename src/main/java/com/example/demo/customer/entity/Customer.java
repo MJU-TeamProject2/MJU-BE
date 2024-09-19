@@ -31,14 +31,16 @@ public class Customer extends BaseEntity {
 	private String password;
 	@Column(name = "phone_number")
 	private String phoneNumber;
+	private boolean deleted;
 
 	@Builder
-	public Customer(String name, int age, Gender gender, String email, String password, String phoneNumber) {
+	public Customer(String name, int age, Gender gender, String email, String password, String phoneNumber, boolean deleted) {
 		this.name = name;
 		this.age = age;
 		this.gender = gender;
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
+		this.deleted = deleted;
 	}
 }

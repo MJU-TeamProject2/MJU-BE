@@ -27,6 +27,15 @@ public class CustomerControllerImpl implements CustomerController {
 	@Override
 	@PostMapping("/register")
 	public void register(@RequestBody RegisterRequest registerRequest) {
-
+		Customer customer = Customer.builder()
+			.name(registerRequest.name())
+			.age(registerRequest.age())
+			.gender(registerRequest.gender())
+			.email(registerRequest.email())
+			.password(registerRequest.password())
+			.phoneNumber(registerRequest.phoneNumber())
+			.deleted(false)
+			.build();
+		customerService.register(customer);
 	}
 }
