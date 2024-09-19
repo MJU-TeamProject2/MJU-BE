@@ -15,6 +15,6 @@ public class CustomerService {
 	private final CustomerRepository customerRepository;
 
 	public void register(Customer customer) {
-
+		customerRepository.save(customer);
 	}
 }
