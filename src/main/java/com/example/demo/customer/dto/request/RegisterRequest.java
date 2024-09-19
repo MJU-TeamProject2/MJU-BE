@@ -10,7 +10,8 @@ public record RegisterRequest(@Schema(description = "이름", requiredMode = Sch
 							  String name,
 							  @Schema(description = "나이", requiredMode = Schema.RequiredMode.REQUIRED)
 							  int age,
-							  @Schema(description = "성별", requiredMode = Schema.RequiredMode.REQUIRED)
+							  @Schema(description = "성별", requiredMode = Schema.RequiredMode.REQUIRED,
+								  allowableValues = {"M", "F", "남자", "여자"})
 							  Gender gender,
 							  @Schema(description = "이메일", requiredMode = Schema.RequiredMode.REQUIRED)
 							  String email,

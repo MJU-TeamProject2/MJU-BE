@@ -4,6 +4,8 @@ import com.example.demo.common.util.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +26,7 @@ public class Customer extends BaseEntity {
 	private Long id;
 	private String name;
 	private int age;
+	@Enumerated(EnumType.STRING)
 	private Gender gender;
 	private String email;
 	private String password;

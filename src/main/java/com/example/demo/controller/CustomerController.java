@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Customer API", description = "Customer API")
 public interface CustomerController{
 
-	@Operation(summary = "", description = "")
+	@Operation(summary = "고객 회원가입 API", description = "고객의 회원가입을 위한 API")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
