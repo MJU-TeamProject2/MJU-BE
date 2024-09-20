@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomerControllerImpl implements CustomerController {
 
 	private final CustomerService customerService;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	@PostMapping("/register")
@@ -29,7 +31,7 @@ public class CustomerControllerImpl implements CustomerController {
 			.age(registerRequest.age())
 			.gender(registerRequest.gender())
 			.email(registerRequest.email())
-			.password(registerRequest.password())
+			.password(passwordEncoder.encode(registerRequest.password()))
 			.phoneNumber(registerRequest.phoneNumber())
 			.deleted(false)
 			.build();
