@@ -25,7 +25,8 @@ public record RegisterRequest(@Schema(description = "이름", requiredMode = Sch
 							  @NotNull(message = "성별은 필수입니다.")
 							  @GenderValidation.ValidGender
 							  Gender gender,
-							  @Schema(description = "이메일", requiredMode = Schema.RequiredMode.REQUIRED)
+							  @Schema(description = "이메일", requiredMode = Schema.RequiredMode.REQUIRED,
+							  	example = "1234@naver.com")
 							  @NotBlank(message = "이메일은 필수입니다.")
 							  @Email(message = "올바른 이메일 형식이 아닙니다.")
 							  @Size(max = 200, message = "이메일은 200자를 초과할 수 없습니다.")
