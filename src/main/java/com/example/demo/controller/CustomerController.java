@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.customer.dto.request.RegisterRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +23,6 @@ public interface CustomerController{
 
 	})
 	@PostMapping(value = "/register")
-	void register(@RequestBody RegisterRequest registerRequest);
+	ResponseEntity<SuccessResponse<Void>> register(@RequestBody RegisterRequest registerRequest);
 
 }
