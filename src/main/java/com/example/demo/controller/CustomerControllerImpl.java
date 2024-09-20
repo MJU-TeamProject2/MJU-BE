@@ -9,6 +9,7 @@ import com.example.demo.customer.dto.request.RegisterRequest;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.service.CustomerService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,7 +21,7 @@ public class CustomerControllerImpl implements CustomerController {
 
 	@Override
 	@PostMapping("/register")
-	public void register(@RequestBody RegisterRequest registerRequest) {
+	public void register(@Valid @RequestBody RegisterRequest registerRequest) {
 		// TODO email format 적용 & 비밀번호 암호화
 		checkEmailDuplicate(registerRequest.email());
 		Customer customer = Customer.builder()
