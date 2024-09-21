@@ -36,7 +36,6 @@ public class CustomerControllerImpl implements CustomerController {
 			.email(registerRequest.email())
 			.password(passwordEncoder.encode(registerRequest.password()))
 			.phoneNumber(registerRequest.phoneNumber())
-			.deleted(false)
 			.build();
 		customerService.register(customer);
 

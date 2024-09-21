@@ -35,13 +35,13 @@ public class Customer extends BaseEntity {
 	private boolean deleted;
 
 	@Builder
-	public Customer(String name, int age, Gender gender, String email, String password, String phoneNumber, boolean deleted) {
+	public Customer(String name, int age, Gender gender, String email, String password, String phoneNumber) {
 		this.name = name;
 		this.age = age;
 		this.gender = gender;
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
-		this.deleted = deleted;
+		this.deleted = false;
 	}
 }
