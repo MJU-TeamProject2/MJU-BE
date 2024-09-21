@@ -1,6 +1,9 @@
 package com.example.demo.common.dto;
 
+import static org.springframework.http.HttpHeaders.*;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -34,4 +37,9 @@ public class SuccessResponse<T> {
 		return ResponseEntity.status(httpStatus).body(this);
 	}
 
+	public ResponseEntity<SuccessResponse<T>> okWithCookie(ResponseCookie responseCookie) {
+		return ResponseEntity.ok()
+			.header(SET_COOKIE, responseCookie.toString())
+			.body(this);
+	}
 }
