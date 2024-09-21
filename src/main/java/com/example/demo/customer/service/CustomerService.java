@@ -35,7 +35,7 @@ public class CustomerService {
 	@Transactional
 	public LoginResponse login(String email, String password) {
 		Customer customer = customerRepository.findByEmail(email)
-			.orElseThrow(() -> new CustomerNotFoundException());
+			.orElseThrow(CustomerNotFoundException::new);
 		if (!passwordEncoder.matches(password, customer.getPassword())) {
 			throw new CustomException(CustomerErrorCode.CUSTOMER_WRONG_PASSWORD);
 		}
