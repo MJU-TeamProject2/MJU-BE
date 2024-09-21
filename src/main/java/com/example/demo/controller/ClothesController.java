@@ -1,29 +1,25 @@
 package com.example.demo.controller;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.clothes.dto.GetClothesResponse;
-import com.example.demo.clothes.service.ClothesService;
 import com.example.demo.common.dto.PageResponse;
+import com.example.demo.common.dto.SuccessResponse;
 
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@RequestMapping("/api/customer")
-@RequiredArgsConstructor
-public class ClothesController implements ClothesControllerInterface{
+@Tag(name = "Clothes API", description = "옷 API")
+public interface ClothesController {
 
-	private final ClothesService clothesService;
-	@Override
-	public PageResponse<GetClothesResponse> getAllClothes(
+	@Operation(summary = "옷 전체 조회", description = "Page에 맞게 옷 조회")
+	@ApiResponse(responseCode = "200", description = "성공적으로 조회")
+	@GetMapping("/clothes/all")
+	ResponseEntity<SuccessResponse<PageResponse<GetClothesResponse>>> getAllClothes(
 		@RequestParam(value = "size", required = false, defaultValue = "20") int size,
 		@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-		@RequestParam(name = "sort", required = false, defaultValue = "LATEST") Sort sort) {
-
-		return clothesService.getAllClothes(PageRequest.of(page, size, sort));
-	}
+		@RequestParam(name = "sort", required = false, defaultValue = "LATEST") String sortOptions);
 }

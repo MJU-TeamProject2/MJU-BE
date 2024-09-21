@@ -16,6 +16,6 @@ public class ClothesService {
 	private final ClothesRepository clothesRepository;
 
 	public PageResponse<GetClothesResponse> getAllClothes(PageRequest pageRequest) {
-		return PageUtils.toPageResponse(clothesRepository.findAll(pageRequest)).map(clothes -> GetClothesResponse.from(clothes));
+		return PageUtils.toPageResponse(clothesRepository.findAll(pageRequest)).map(GetClothesResponse::from);
 	}
 }

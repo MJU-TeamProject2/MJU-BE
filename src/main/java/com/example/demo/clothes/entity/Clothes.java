@@ -1,5 +1,7 @@
 package com.example.demo.clothes.entity;
 
+import com.example.demo.common.util.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +16,7 @@ import lombok.experimental.FieldNameConstants;
 @Getter
 @FieldNameConstants
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class Clothes {
+public class Clothes extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "clothes_id")
