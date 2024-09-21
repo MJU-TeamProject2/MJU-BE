@@ -2,6 +2,7 @@ package com.example.demo.customer.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.common.exception.CustomException;
 import com.example.demo.common.security.TokenProvider;
@@ -31,6 +32,7 @@ public class CustomerService {
 		return customerRepository.findByEmail(email).isPresent();
 	}
 
+	@Transactional
 	public LoginResponse login(String email, String password) {
 		Customer customer = customerRepository.findByEmail(email)
 			.orElseThrow(() -> new CustomerNotFoundException());
