@@ -1,27 +1,28 @@
 package com.example.demo.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import com.example.demo.customer.dto.GetCustomerResponse;
 import com.example.demo.common.dto.SuccessResponse;
-import com.example.demo.customer.service.CustomerService;
+import com.example.demo.customer.dto.request.RegisterRequest;
 
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@RequestMapping("/api/customer")
-@RequiredArgsConstructor
-public class CustomerController {
+@Tag(name = "Customer API", description = "Customer API")
+public interface CustomerController{
 
-	private CustomerService customerService;
+	@Operation(summary = "고객 회원가입 API", description = "고객의 회원가입을 위한 API")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 메시지 반환")
 
-	@GetMapping("/{email}")
-	public ResponseEntity<SuccessResponse<GetCustomerResponse>> getCustomerByEmail(@PathVariable String email) {
-		return SuccessResponse.of(customerService.findCustomer(email)).asHttp(HttpStatus.OK);
-	}
+	})
+	@PostMapping(value = "/register")
+	ResponseEntity<SuccessResponse<Void>> register(@RequestBody RegisterRequest registerRequest);
+
 }

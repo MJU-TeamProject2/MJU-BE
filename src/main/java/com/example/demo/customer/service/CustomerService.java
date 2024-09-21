@@ -2,9 +2,7 @@ package com.example.demo.customer.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.customer.dto.GetCustomerResponse;
 import com.example.demo.customer.entity.Customer;
-import com.example.demo.exception.CustomerNotFoundException;
 import com.example.demo.customer.repository.CustomerRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -14,8 +12,11 @@ import lombok.RequiredArgsConstructor;
 public class CustomerService {
 	private final CustomerRepository customerRepository;
 
-	public GetCustomerResponse findCustomer(String email) {
-		Customer customer = customerRepository.findByEmail(email).orElseThrow(CustomerNotFoundException::new);
-		return GetCustomerResponse.from(customer);
+	public void register(Customer customer) {
+		customerRepository.save(customer);
+	}
+
+	public boolean checkEmailDuplicate(String email) {
+		return customerRepository.findByEmail(email).isPresent();
 	}
 }
