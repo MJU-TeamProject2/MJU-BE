@@ -8,6 +8,10 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+  jwt:
+    secret: ${JWT_SECRET}
+    access-token-validity-time: 1h
+    refresh-token-validity-time: 14d
 
 springdoc:
   api-docs:
