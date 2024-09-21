@@ -23,7 +23,8 @@ public class CustomerService {
 	private final CustomerAuthService customerAuthService;
 
 	public void register(Customer customer) {
-		customerRepository.save(customer);
+		Customer newCustomer = customerRepository.save(customer);
+		customerAuthService.createCustomerAuth(newCustomer.getId());
 	}
 
 	public boolean checkEmailDuplicate(String email) {

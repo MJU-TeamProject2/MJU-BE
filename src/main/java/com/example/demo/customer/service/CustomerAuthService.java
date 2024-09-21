@@ -14,7 +14,7 @@ public class CustomerAuthService {
 
 	private final CustomerAuthRepository customerAuthRepository;
 
-	public void createShopAdminAuth(Long customerId) {
+	public void createCustomerAuth(Long customerId) {
 		customerAuthRepository.save(CustomerAuth.createAuth(customerId));
 	}
 
