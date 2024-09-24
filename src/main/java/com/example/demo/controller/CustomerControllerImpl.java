@@ -31,6 +31,7 @@ public class CustomerControllerImpl implements CustomerController {
 		checkEmailDuplicate(registerRequest.email());
 		Customer customer = Customer.builder()
 			.name(registerRequest.name())
+			.nickName(registerRequest.nickName())
 			.age(registerRequest.age())
 			.gender(registerRequest.gender())
 			.email(registerRequest.email())
