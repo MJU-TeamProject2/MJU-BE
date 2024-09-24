@@ -16,6 +16,9 @@ public record RegisterRequest(@Schema(description = "이름", requiredMode = Sch
 							  @NotBlank(message = "이름은 필수입니다.")
 	  						  @Size(max = 10, message = "이름은 10자를 초과할 수 없습니다.")
 							  String name,
+							  @Schema(description = "닉네임", requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+							  example = "nickName")
+							  String nickName,
 							  @Schema(description = "나이", requiredMode = Schema.RequiredMode.REQUIRED,
 							  example = "25")
 							  @NotNull(message = "나이는 필수입니다.")

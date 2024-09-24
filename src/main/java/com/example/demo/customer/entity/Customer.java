@@ -1,5 +1,7 @@
 package com.example.demo.customer.entity;
 
+import org.springframework.util.StringUtils;
+
 import com.example.demo.common.util.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -25,6 +27,8 @@ public class Customer extends BaseEntity {
 	@Column(name = "customer_id")
 	private Long id;
 	private String name;
+	@Column(name = "nick_name")
+	private String nickName;
 	private int age;
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
@@ -35,9 +39,10 @@ public class Customer extends BaseEntity {
 	private boolean deleted;
 
 	@Builder
-	public Customer(String name, int age, Gender gender, String email, String password, String phoneNumber) {
+	public Customer(String name, String nickName, int age, Gender gender, String email, String password, String phoneNumber) {
 		this.name = name;
 		this.age = age;
+		this.nickName = StringUtils.hasText(nickName) ? nickName : name;
 		this.gender = gender;
 		this.email = email;
 		this.password = password;

@@ -28,8 +28,10 @@ public class CustomerService {
 		customerAuthService.createCustomerAuth(newCustomer.getId());
 	}
 
-	public boolean checkEmailDuplicate(String email) {
-		return customerRepository.findByEmail(email).isPresent();
+	public void checkEmailDuplicate(String email) {
+		if(customerRepository.findByEmail(email).isPresent()) {
+			throw new CustomException(CustomerErrorCode.CUSTOMER_EMAIL_DUPLICATE);
+		}
 	}
 
 	@Transactional
