@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.common.dto.SuccessResponse;
+import com.example.demo.common.security.CustomCookieName;
+import com.example.demo.customer.dto.request.LoginRequest;
 import com.example.demo.customer.dto.request.RegisterRequest;
+import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.service.CustomerService;
 
@@ -43,9 +47,25 @@ public class CustomerControllerImpl implements CustomerController {
 		return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
 	}
 
+	@Override
+	@PostMapping(value = "/login")
+	public ResponseEntity<SuccessResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
+		LoginResponse loginResponse = customerService.login(loginRequest.email(), loginRequest.password());
+		var refreshTokenResponseCookie = getRefreshTokenResponseCookie(loginResponse.refreshToken());
+		return SuccessResponse.of(loginResponse).okWithCookie(refreshTokenResponseCookie);
+	}
+
 	private void checkEmailDuplicate(String email) {
-		if(customerService.checkEmailDuplicate(email)) {
+		if (customerService.checkEmailDuplicate(email)) {
 			throw new RuntimeException("이미 가입한 이메일입니다.");
 		}
+	}
+
+	private ResponseCookie getRefreshTokenResponseCookie(String refreshToken) {
+		return ResponseCookie.from(CustomCookieName.REFRESH_TOKEN, refreshToken)
+			.httpOnly(true)
+			.secure(true)
+			.path("/")
+			.build();
 	}
 }
