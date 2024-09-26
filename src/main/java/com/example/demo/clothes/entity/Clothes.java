@@ -31,13 +31,12 @@ public class Clothes extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private GenderCategory genderCategory;
 	private String productNumber;
-	private int discount;
+	private Integer discount;
 	private String detailUrl;
-	private Integer quantity;
 
 	@Builder
 	public Clothes(Long id, String category, String imageUrl, String name, Integer price,
-		GenderCategory genderCategory, String productNumber, int discount, String detailUrl, Integer quantity) {
+		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl) {
 		this.id = id;
 		this.category = category;
 		this.imageUrl = imageUrl;
@@ -47,6 +46,5 @@ public class Clothes extends BaseEntity {
 		this.productNumber = productNumber;
 		this.discount = discount;
 		this.detailUrl = detailUrl;
-		this.quantity = quantity;
 	}
 }
