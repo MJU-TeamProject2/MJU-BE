@@ -2,12 +2,14 @@ package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+@EnableJpaAuditing
 @SpringBootApplication
-public class Teamproject2Application {
+public class TeamProject2Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Teamproject2Application.class, args);
+		SpringApplication.run(TeamProject2Application.class, args);
 	}
 
 }
