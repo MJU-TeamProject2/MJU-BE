@@ -4,6 +4,8 @@ import com.example.demo.common.util.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,19 +28,24 @@ public class Clothes extends BaseEntity {
 	@Column(name = "c_name")
 	private String name;
 	private Integer price;
-	private String detail;
+	@Enumerated(EnumType.STRING)
+	private GenderCategory genderCategory;
+	private String productNumber;
+	private int discount;
 	private String detailUrl;
 	private Integer quantity;
 
 	@Builder
 	public Clothes(Long id, String category, String imageUrl, String name, Integer price,
-		String detail, String detailUrl, Integer quantity) {
+		GenderCategory genderCategory, String productNumber, int discount, String detailUrl, Integer quantity) {
 		this.id = id;
 		this.category = category;
 		this.imageUrl = imageUrl;
 		this.name = name;
 		this.price = price;
-		this.detail = detail;
+		this.genderCategory = genderCategory;
+		this.productNumber = productNumber;
+		this.discount = discount;
 		this.detailUrl = detailUrl;
 		this.quantity = quantity;
 	}
