@@ -1,5 +1,8 @@
 package com.example.demo.clothes.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.demo.common.util.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -9,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +37,8 @@ public class Clothes extends BaseEntity {
 	private String productNumber;
 	private Integer discount;
 	private String detailUrl;
+	@OneToMany(mappedBy = "clothes")
+	private List<ClothesSize> clothesSizeList;
 
 	@Builder
 	public Clothes(Long id, String category, String imageUrl, String name, Integer price,
@@ -46,5 +52,6 @@ public class Clothes extends BaseEntity {
 		this.productNumber = productNumber;
 		this.discount = discount;
 		this.detailUrl = detailUrl;
+		this.clothesSizeList = new ArrayList<>();
 	}
 }
