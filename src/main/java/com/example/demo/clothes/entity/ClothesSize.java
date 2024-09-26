@@ -34,7 +34,7 @@ public class ClothesSize {
 	@Enumerated(EnumType.STRING)
 	private Size size;
 
-	private int quantity;
+	private Integer quantity;
 
 	@Builder
 	public ClothesSize(Long clothesSizeId, Clothes clothes, Size size, int quantity) {
