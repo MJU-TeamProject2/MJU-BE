@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.common.security.CustomCookieName;
+import com.example.demo.common.security.JwtInfo;
+import com.example.demo.customer.dto.GetCustomerResponse;
 import com.example.demo.customer.dto.request.LoginRequest;
 import com.example.demo.customer.dto.request.RegisterRequest;
 import com.example.demo.customer.dto.response.LoginResponse;
@@ -52,6 +54,11 @@ public class CustomerControllerImpl implements CustomerController {
 		LoginResponse loginResponse = customerService.login(loginRequest.email(), loginRequest.password());
 		var refreshTokenResponseCookie = getRefreshTokenResponseCookie(loginResponse.refreshToken());
 		return SuccessResponse.of(loginResponse).okWithCookie(refreshTokenResponseCookie);
+	}
+
+	@Override
+	public ResponseEntity<SuccessResponse<GetCustomerResponse>> retrieveProfile(JwtInfo jwtInfo) {
+		return null;
 	}
 
 	private ResponseCookie getRefreshTokenResponseCookie(String refreshToken) {

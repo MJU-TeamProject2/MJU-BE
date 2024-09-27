@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.common.dto.SuccessResponse;
+import com.example.demo.common.security.AuthInfo;
+import com.example.demo.common.security.JwtInfo;
+import com.example.demo.customer.dto.GetCustomerResponse;
 import com.example.demo.customer.dto.request.LoginRequest;
 import com.example.demo.customer.dto.request.RegisterRequest;
 import com.example.demo.customer.dto.response.LoginResponse;
@@ -36,5 +40,14 @@ public interface CustomerController {
 	})
 	@PostMapping(value = "/login")
 	ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody LoginRequest loginRequest);
+
+	@Operation(summary = "내 정보 조회 API", description = "마이페이지에서 내 정보 조회를 위한 API")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 조회 완료")
+	})
+	@GetMapping(value = "/{customerId}/profile")
+	ResponseEntity<SuccessResponse<GetCustomerResponse>> retrieveProfile(@AuthInfo JwtInfo jwtInfo);
 
 }
