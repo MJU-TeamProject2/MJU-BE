@@ -1,0 +1,57 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]  # main 브랜치에 push가 발생하면 워크플로우 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code  # 코드 체크아웃
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js  # Node.js 설정
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # 프로젝트에 맞는 Node.js 버전 선택
+
+      - name: Cache dependencies  # 의존성 캐싱으로 빌드 속도 향상
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+
+      - name: Install dependencies  # 프로젝트 의존성 설치
+        run: npm install
+
+      - name: Run tests  # 테스트 실행
+        run: npm test
+
+      - name: Build  # 프로젝트 빌드
+        run: npm run build
+
+      - name: Deploy to EC2  # EC2에 배포
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+        run: |
+          # SSH 키 설정
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          
+          # 빌드 파일을 EC2로 전송
+          scp -i private_key -o StrictHostKeyChecking=no -r ./build/* ${USER}@${HOST}:/home/${USER}/server
+          
+          # EC2에 SSH 접속하여 애플리케이션 재시작
+          ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} '
+            cd /home/${USER}/app &&
+            npm install --production &&
+            pm2 restart ecosystem.config.js --env production || pm2 start ecosystem.config.js --env production
+          '
+
+      - name: Clean up  # 임시 파일 정리
+        run: rm -f private_key
