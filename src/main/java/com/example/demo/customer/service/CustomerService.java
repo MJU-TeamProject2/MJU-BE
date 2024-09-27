@@ -6,10 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.common.exception.CustomException;
 import com.example.demo.common.security.TokenProvider;
+import com.example.demo.customer.dto.GetCustomerResponse;
 import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.entity.CustomerAuth;
 import com.example.demo.customer.repository.CustomerRepository;
+import com.example.demo.exception.CustomerAuthNotFoundException;
 import com.example.demo.exception.CustomerErrorCode;
 import com.example.demo.exception.CustomerNotFoundException;
 
@@ -53,5 +55,10 @@ public class CustomerService {
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
+	}
+
+	public GetCustomerResponse retrieveProfile(Long customerId) {
+		return GetCustomerResponse.from(customerRepository.findById(customerId).orElseThrow(
+			CustomerAuthNotFoundException::new));
 	}
 }

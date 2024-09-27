@@ -47,7 +47,7 @@ public interface CustomerController {
 			responseCode = "200",
 			description = "성공적으로 조회 완료")
 	})
-	@GetMapping(value = "/{customerId}/profile")
+	@GetMapping(value = "/profile")
 	ResponseEntity<SuccessResponse<GetCustomerResponse>> retrieveProfile(@AuthInfo JwtInfo jwtInfo);
 
 }
