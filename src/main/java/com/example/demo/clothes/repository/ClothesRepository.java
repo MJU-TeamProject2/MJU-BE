@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.demo.clothes.entity.Clothes;
 
-public interface ClothesRepository extends JpaRepository<Clothes, Long> {
-	Page<Clothes> findAll(Pageable pageable);
+import jakarta.validation.constraints.NotNull;
 
-	Optional<Clothes> findById(Long clothesId);
+public interface ClothesRepository extends JpaRepository<Clothes, Long> {
+	Page<Clothes> findAll(@NotNull Pageable pageable);
+
+	Optional<Clothes> findById(@NotNull Long clothesId);
 }
