@@ -27,7 +27,8 @@ public class Clothes extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "clothes_id")
 	private Long id;
-	private String category; //todo Category 확정 시 enum
+	@Enumerated(EnumType.STRING)
+	private ClothesCategory category;
 	private String imageUrl;
 	@Column(name = "c_name")
 	private String name;
@@ -41,7 +42,7 @@ public class Clothes extends BaseEntity {
 	private List<ClothesSize> clothesSizeList;
 
 	@Builder
-	public Clothes(Long id, String category, String imageUrl, String name, Integer price,
+	public Clothes(Long id, ClothesCategory category, String imageUrl, String name, Integer price,
 		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl) {
 		this.id = id;
 		this.category = category;
