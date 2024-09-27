@@ -31,10 +31,10 @@ public class CustomerControllerImpl implements CustomerController {
 	@Override
 	@PostMapping("/register")
 	public ResponseEntity<SuccessResponse<Void>> register(@Valid @RequestBody RegisterRequest registerRequest) {
-		// TODO email format 적용 & 비밀번호 암호화
-		checkEmailDuplicate(registerRequest.email());
+		customerService.checkEmailDuplicate(registerRequest.email());
 		Customer customer = Customer.builder()
 			.name(registerRequest.name())
+			.nickName(registerRequest.nickName())
 			.age(registerRequest.age())
 			.gender(registerRequest.gender())
 			.email(registerRequest.email())
@@ -52,12 +52,6 @@ public class CustomerControllerImpl implements CustomerController {
 		LoginResponse loginResponse = customerService.login(loginRequest.email(), loginRequest.password());
 		var refreshTokenResponseCookie = getRefreshTokenResponseCookie(loginResponse.refreshToken());
 		return SuccessResponse.of(loginResponse).okWithCookie(refreshTokenResponseCookie);
-	}
-
-	private void checkEmailDuplicate(String email) {
-		if (customerService.checkEmailDuplicate(email)) {
-			throw new RuntimeException("이미 가입한 이메일입니다.");
-		}
 	}
 
 	private ResponseCookie getRefreshTokenResponseCookie(String refreshToken) {
