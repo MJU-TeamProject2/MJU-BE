@@ -57,6 +57,7 @@ public class CustomerService {
 			.build();
 	}
 
+	@Transactional(readOnly = true)
 	public GetCustomerResponse retrieveProfile(Long customerId) {
 		return GetCustomerResponse.from(customerRepository.findById(customerId).orElseThrow(
 			CustomerAuthNotFoundException::new));
