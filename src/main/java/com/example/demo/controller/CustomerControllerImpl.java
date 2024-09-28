@@ -13,7 +13,7 @@ import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.common.security.AuthInfo;
 import com.example.demo.common.security.CustomCookieName;
 import com.example.demo.common.security.JwtInfo;
-import com.example.demo.customer.dto.GetCustomerResponse;
+import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.request.LoginRequest;
 import com.example.demo.customer.dto.request.RegisterRequest;
 import com.example.demo.customer.dto.response.LoginResponse;

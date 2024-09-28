@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.common.exception.CustomException;
 import com.example.demo.common.security.TokenProvider;
-import com.example.demo.customer.dto.GetCustomerResponse;
+import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.entity.CustomerAuth;
