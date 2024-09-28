@@ -8,11 +8,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
+      DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
+      DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'adopt'
