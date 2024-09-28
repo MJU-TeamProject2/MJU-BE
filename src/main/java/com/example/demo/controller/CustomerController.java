@@ -2,21 +2,24 @@ package com.example.demo.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.common.security.AuthInfo;
 import com.example.demo.common.security.JwtInfo;
-import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.request.LoginRequest;
+import com.example.demo.customer.dto.request.ProfileUpdateRequest;
 import com.example.demo.customer.dto.request.RegisterRequest;
+import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.response.LoginResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @Tag(name = "Customer API", description = "Customer API")
 public interface CustomerController {
@@ -49,5 +52,15 @@ public interface CustomerController {
 	})
 	@GetMapping(value = "/profile")
 	ResponseEntity<SuccessResponse<GetCustomerResponse>> retrieveProfile(@AuthInfo JwtInfo jwtInfo);
+
+	@Operation(summary = "내 정보 수정 API", description = "마이페이지에서 내 정보 수정을 위한 API")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 수정 완료")
+	})
+	@PatchMapping(value = "/profile")
+	ResponseEntity<SuccessResponse<Void>> updateProfile(@AuthInfo JwtInfo jwtInfo,
+		@Valid @RequestBody ProfileUpdateRequest profileUpdateRequest);
 
 }

@@ -13,6 +13,7 @@ import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.common.security.AuthInfo;
 import com.example.demo.common.security.CustomCookieName;
 import com.example.demo.common.security.JwtInfo;
+import com.example.demo.customer.dto.request.ProfileUpdateRequest;
 import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.request.LoginRequest;
 import com.example.demo.customer.dto.request.RegisterRequest;
@@ -62,6 +63,12 @@ public class CustomerControllerImpl implements CustomerController {
 		System.out.println(jwtInfo + "  " + jwtInfo.customerId());
 		GetCustomerResponse customerResponse = customerService.retrieveProfile(jwtInfo.customerId());
 		return SuccessResponse.of(customerResponse).asHttp(HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<SuccessResponse<Void>> updateProfile(JwtInfo jwtInfo,
+		ProfileUpdateRequest profileUpdateRequest) {
+		return null;
 	}
 
 	private ResponseCookie getRefreshTokenResponseCookie(String refreshToken) {
