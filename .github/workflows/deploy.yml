@@ -34,11 +34,15 @@ jobs:
       - name: Build  # 프로젝트 빌드
         run: npm run build
 
-      - name: Deploy to EC2  # EC2에 배포
+      - name: Deploy to EC2  # EC2에 배포 및 시크릿 키 설정
         env:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           HOST: ${{ secrets.EC2_HOST }}
           USER: ${{ secrets.EC2_USER }}
+          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
+          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
+          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           # SSH 키 설정
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
