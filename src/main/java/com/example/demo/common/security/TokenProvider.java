@@ -3,10 +3,15 @@ package com.example.demo.common.security;
 import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.common.security.exception.SecurityErrorCode;
@@ -95,5 +100,17 @@ public class TokenProvider {
 		if (!jwtType.name().equals(TOKEN_TYPE)) {
 			throw new TokenException(SecurityErrorCode.DISALLOWED_TOKEN_TYPE);
 		}
+	}
+
+	public Authentication getCustomerIdFromToken(String token) {
+		Claims claims = parseClaims(token).getBody();
+		Long id = Long.parseLong(claims.get(Claims.SUBJECT).toString());
+		Collection<? extends GrantedAuthority> authorities = getAuthorities(claims);
+		return new JwtAuthenticationToken(id, authorities);
+	}
+
+	private Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
+		String adminRole = claims.get(CustomClaims.ROLE).toString();
+		return List.of(new SimpleGrantedAuthority(adminRole));
 	}
 }

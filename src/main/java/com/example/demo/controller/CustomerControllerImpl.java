@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.common.dto.SuccessResponse;
+import com.example.demo.common.security.AuthInfo;
 import com.example.demo.common.security.CustomCookieName;
 import com.example.demo.common.security.JwtInfo;
 import com.example.demo.customer.dto.GetCustomerResponse;
@@ -23,7 +24,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/customer")
+@RequestMapping("/api/v1/customer")
 @RequiredArgsConstructor
 public class CustomerControllerImpl implements CustomerController {
 
@@ -57,7 +58,7 @@ public class CustomerControllerImpl implements CustomerController {
 	}
 
 	@Override
-	public ResponseEntity<SuccessResponse<GetCustomerResponse>> retrieveProfile(JwtInfo jwtInfo) {
+	public ResponseEntity<SuccessResponse<GetCustomerResponse>> retrieveProfile(@AuthInfo JwtInfo jwtInfo) {
 		GetCustomerResponse customerResponse = customerService.retrieveProfile(jwtInfo.customerId());
 		return SuccessResponse.of(customerResponse).asHttp(HttpStatus.OK);
 	}

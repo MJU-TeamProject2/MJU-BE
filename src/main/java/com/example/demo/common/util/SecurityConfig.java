@@ -4,26 +4,36 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.example.demo.common.security.AccessPath;
+import com.example.demo.common.security.TokenFilter;
+import com.example.demo.common.security.TokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final TokenProvider tokenProvider;
+	private final AccessPath accessPath;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-			.authorizeHttpRequests(authz -> authz
-				.requestMatchers("/profile").authenticated()
-				.anyRequest().permitAll()
-			)
+			.authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.csrf(csrf -> csrf.disable())
-			.formLogin(form -> form.disable())
-			.httpBasic(httpBasic -> httpBasic.disable());
+			.csrf(AbstractHttpConfigurer::disable)
+			.formLogin(AbstractHttpConfigurer::disable)
+			.addFilterBefore(new TokenFilter(tokenProvider, accessPath), UsernamePasswordAuthenticationFilter.class)
+			.httpBasic(AbstractHttpConfigurer::disable);
 
 		return http.build();
 
