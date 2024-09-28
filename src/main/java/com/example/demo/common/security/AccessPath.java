@@ -22,8 +22,7 @@ public final class AccessPath {
 	private MultiValueMap<String, HttpMethod> initCustomerAllowedPath() {
 		MultiValueMap<String, HttpMethod> customerAllowdPath = new LinkedMultiValueMap<>();
 		// review
-		customerAllowdPath.put("/api/v1/customer/profile", List.of(HttpMethod.GET));
-
+		customerAllowdPath.put("/api/v1/customer/profile", List.of(HttpMethod.GET, HttpMethod.PATCH));
 
 		return customerAllowdPath;
 	}
