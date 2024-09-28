@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.common.exception.CustomException;
 import com.example.demo.common.security.TokenProvider;
+import com.example.demo.customer.dto.request.ProfileUpdateRequest;
 import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.Customer;
@@ -61,5 +62,12 @@ public class CustomerService {
 	public GetCustomerResponse retrieveProfile(Long customerId) {
 		return GetCustomerResponse.from(customerRepository.findById(customerId).orElseThrow(
 			CustomerAuthNotFoundException::new));
+	}
+
+	@Transactional
+	public void updateProfile(Long customerId, ProfileUpdateRequest profileUpdateRequest) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		customer.update(profileUpdateRequest.email(), profileUpdateRequest.name(), profileUpdateRequest.nickName(),
+			profileUpdateRequest.age(), profileUpdateRequest.phoneNumber());
 	}
 }

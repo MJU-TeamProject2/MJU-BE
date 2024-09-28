@@ -54,4 +54,12 @@ public class Customer extends BaseEntity {
 	public Role getRole() {
 		return Role.CUSTOMER;
 	}
+
+	public void update(String email, String name, String nickName, int age, String phoneNumber) {
+		this.email = email;
+		this.name = name;
+		this.nickName = nickName;
+		this.age = age;
+		this.phoneNumber = phoneNumber;
+	}
 }
