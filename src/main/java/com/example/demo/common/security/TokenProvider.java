@@ -38,8 +38,6 @@ public class TokenProvider {
 
 	private final Key secretKey;
 
-	private final String TOKEN_TYPE = "tokenType";
-
 	public TokenProvider(@Value("${spring.jwt.secret}") String secret,
 		@Value("${spring.jwt.access-token-validity-time}") Duration accessTokenValidityTime,
 		@Value("${spring.jwt.refresh-token-validity-time}") Duration refreshTokenValidityTime) {
@@ -69,6 +67,7 @@ public class TokenProvider {
 		Date currentDate = Date.from(now);
 		Date expiredDate = Date.from(now.plus(tokenValidityTime));
 
+		String TOKEN_TYPE = "tokenType";
 		return Jwts.builder()
 			.setHeader(Map.of("typ", "JWT"))
 			.setSubject(String.valueOf(customerId))
@@ -107,7 +106,6 @@ public class TokenProvider {
 	}
 
 	public Authentication getCustomerIdFromToken(String token) {
-		// TODO claims 안들어오거나
 		Claims claims = parseClaims(token).getBody();
 		Long id = Long.parseLong(claims.get(Claims.SUBJECT).toString());
 		Collection<? extends GrantedAuthority> authorities = getAuthorities(claims);
@@ -115,7 +113,6 @@ public class TokenProvider {
 	}
 
 	private Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
-		// TODO claims 안에 adminRole 없음
 		String adminRole = claims.get(CustomClaims.ROLE).toString();
 		return List.of(new SimpleGrantedAuthority(adminRole));
 	}

@@ -10,9 +10,9 @@ import org.springframework.util.MultiValueMap;
 import lombok.Getter;
 
 @Component
+@Getter
 public final class AccessPath {
 
-	@Getter
 	private final MultiValueMap<String, HttpMethod> customerAllowdPath;
 
 	private AccessPath() {
