@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.example.demo.common.security.exception.SecurityErrorCode;
 import com.example.demo.common.security.exception.TokenException;
 import com.example.demo.common.security.exception.TokenExpiredException;
+import com.example.demo.common.util.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -47,22 +48,23 @@ public class TokenProvider {
 		this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
 	}
 
-	public String createAccessToken(Long customerId) {
-		return createToken(customerId, "ACCESS", accessTokenValidityTime);
+	public String createAccessToken(Long customerId, Role role) {
+		return createToken(customerId, role, "ACCESS", accessTokenValidityTime);
 	}
 
-	public String createRefreshToken(Long customerId) {
-		return createToken(customerId, "REFRESH", refreshTokenValidityTime);
+	public String createRefreshToken(Long customerId, Role role) {
+		return createToken(customerId, role, "REFRESH", refreshTokenValidityTime);
 	}
 
 	public String createNewAccessTokenFromRefreshToken(String refreshToken) {
 		Claims claims = validateToken(JwtType.REFRESH, refreshToken).getBody();
 
 		Long customerId = Long.parseLong((String)claims.get(Claims.SUBJECT));
-		return createAccessToken(customerId);
+		Role role = Role.valueOf((String) claims.get(CustomClaims.ROLE));
+		return createAccessToken(customerId, role);
 	}
 
-	private String createToken(Long customerId, String tokenType, Duration tokenValidityTime) {
+	private String createToken(Long customerId, Role role, String tokenType, Duration tokenValidityTime) {
 		Instant now = Instant.now();
 		Date currentDate = Date.from(now);
 		Date expiredDate = Date.from(now.plus(tokenValidityTime));
@@ -72,6 +74,7 @@ public class TokenProvider {
 			.setSubject(String.valueOf(customerId))
 			.setIssuedAt(currentDate)
 			.setExpiration(expiredDate)
+			.claim(CustomClaims.ROLE, role)
 			.claim(TOKEN_TYPE, tokenType)
 			.signWith(secretKey, SignatureAlgorithm.HS512)
 			.compact();
@@ -97,12 +100,14 @@ public class TokenProvider {
 	}
 
 	private void validateTokenType(Jws<Claims> claimsJws, JwtType jwtType) {
-		if (!jwtType.name().equals(TOKEN_TYPE)) {
+		String tokenType = String.valueOf(claimsJws.getBody().get(CustomClaims.TOKEN_TYPE));
+		if (!jwtType.name().equals(tokenType)) {
 			throw new TokenException(SecurityErrorCode.DISALLOWED_TOKEN_TYPE);
 		}
 	}
 
 	public Authentication getCustomerIdFromToken(String token) {
+		// TODO claims 안들어오거나
 		Claims claims = parseClaims(token).getBody();
 		Long id = Long.parseLong(claims.get(Claims.SUBJECT).toString());
 		Collection<? extends GrantedAuthority> authorities = getAuthorities(claims);
@@ -110,7 +115,9 @@ public class TokenProvider {
 	}
 
 	private Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
+		// TODO claims 안에 adminRole 없음
 		String adminRole = claims.get(CustomClaims.ROLE).toString();
 		return List.of(new SimpleGrantedAuthority(adminRole));
 	}
+
 }

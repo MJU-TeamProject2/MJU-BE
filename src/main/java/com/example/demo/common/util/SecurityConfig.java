@@ -28,7 +28,9 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-			.authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
+			.authorizeHttpRequests(authz -> authz
+				.requestMatchers("http://localhost:8080/api/v1/customer/profile").authenticated()
+				.anyRequest().permitAll())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
@@ -36,7 +38,6 @@ public class SecurityConfig {
 			.httpBasic(AbstractHttpConfigurer::disable);
 
 		return http.build();
-
 	}
 
 	@Bean

@@ -59,6 +59,7 @@ public class CustomerControllerImpl implements CustomerController {
 
 	@Override
 	public ResponseEntity<SuccessResponse<GetCustomerResponse>> retrieveProfile(@AuthInfo JwtInfo jwtInfo) {
+		System.out.println(jwtInfo + "  " + jwtInfo.customerId());
 		GetCustomerResponse customerResponse = customerService.retrieveProfile(jwtInfo.customerId());
 		return SuccessResponse.of(customerResponse).asHttp(HttpStatus.OK);
 	}

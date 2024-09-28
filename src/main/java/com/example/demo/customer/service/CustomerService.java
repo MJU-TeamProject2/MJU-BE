@@ -44,8 +44,8 @@ public class CustomerService {
 			throw new CustomException(CustomerErrorCode.CUSTOMER_WRONG_PASSWORD);
 		}
 
-		String accessToken = tokenProvider.createAccessToken(customer.getId());
-		String refreshToken = tokenProvider.createRefreshToken(customer.getId());
+		String accessToken = tokenProvider.createAccessToken(customer.getId(), customer.getRole());
+		String refreshToken = tokenProvider.createRefreshToken(customer.getId(), customer.getRole());
 
 		CustomerAuth customerAuth = customerAuthService.findByCustomerId(customer.getId());
 		customerAuth.updateRefreshToken(refreshToken);

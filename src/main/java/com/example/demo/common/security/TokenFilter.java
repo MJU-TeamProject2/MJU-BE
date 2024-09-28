@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -15,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.demo.common.security.exception.SecurityErrorCode;
 import com.example.demo.common.security.exception.TokenException;
 import com.example.demo.common.security.exception.TokenExpiredException;
+import com.example.demo.common.util.Role;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -49,6 +51,7 @@ public class TokenFilter extends OncePerRequestFilter {
 		}
 
 		Authentication authentication = tokenProvider.getCustomerIdFromToken(token);
+		validateRoleHasAccessPermission(request, authentication);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		filterChain.doFilter(request, response);
 	}
@@ -78,5 +81,21 @@ public class TokenFilter extends OncePerRequestFilter {
 
 	private boolean isMatchMethod(List<HttpMethod> ignoredPathList, HttpServletRequest request) {
 		return ignoredPathList.stream().anyMatch(httpMethod -> httpMethod.matches(request.getMethod()));
+	}
+
+	private void validateRoleHasAccessPermission(HttpServletRequest request, Authentication authentication) {
+		boolean hasAccessPermissionAllowed = authentication.getAuthorities().stream()
+			.map(GrantedAuthority::getAuthority)
+			.map(Role::valueOf)
+			.anyMatch(authority -> {
+				if (authority.equals(Role.CUSTOMER)) {
+					return isRequestMatch(accessPath.getCustomerAllowdPath(), request);
+				}
+				return false;
+			});
+
+		if (!hasAccessPermissionAllowed) {
+			throw new TokenException(SecurityErrorCode.AUTHORITY_NOT_FOUND);
+		}
 	}
 }
