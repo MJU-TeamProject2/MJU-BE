@@ -1,16 +1,15 @@
-name: Deploy to EC2
+name: CI/CD to Amazon EC2
 
 on:
   push:
-    branches: [ main ]  # main 브랜치에 push가 발생하면 워크플로우 실행
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code  # 코드 체크아웃
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
@@ -18,35 +17,39 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Deploy to EC2  # EC2에 배포 및 시크릿 키 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Copy files to EC2 with SCP
         env:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          HOST: ${{ secrets.EC2_HOST }}
-          USER: ${{ secrets.EC2_USER }}
-          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
-          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
-          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          HOST_DNS: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # SSH 키 설정
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          
-          # JAR 파일을 EC2로 전송
-          scp -i private_key -o StrictHostKeyChecking=no ./build/libs/*.jar ${USER}@${HOST}:/home/${USER}/app/app.jar
-          
-          # EC2에 SSH 접속하여 애플리케이션 재시작
-          ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} '
-            export DATASOURCE_USERNAME="${DATASOURCE_USERNAME}"
-            export DATASOURCE_PASSWORD="${DATASOURCE_PASSWORD}"
-            export DATASOURCE_URL="${DATASOURCE_URL}"
-            export JWT_SECRET="${JWT_SECRET}"
-            cd /home/${USER}/app
-            pkill -f 'java -jar app.jar' || true
-            nohup java -jar app.jar > app.log 2>&1 &
+          scp -o StrictHostKeyChecking=no -i private_key ./build/libs/*.jar ${EC2_USER}@${HOST_DNS}:~/app.jar
+
+      - name: Deploy to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          HOST_DNS: ${{ secrets.EC2_HOST_DNS }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${EC2_USER}@${HOST_DNS} '
+            sudo systemctl stop tp2-server || true
+            sudo mv ~/app.jar /opt/tp2-server/app.jar
+            sudo systemctl start tp2-server
           '
 
-      - name: Clean up  # 임시 파일 정리
+      - name: Clean up
         run: rm -f private_key
