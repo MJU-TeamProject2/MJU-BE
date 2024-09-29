@@ -26,6 +26,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Clear build cache
+        run: ./gradlew clean
+
       - name: Build with Gradle
         run: ./gradlew build -x test
 
@@ -36,7 +39,9 @@ jobs:
         run: ls -R $GITHUB_WORKSPACE
 
       - name: Verify JAR file existence
-        run: ls -l build/libs/
+        run: |
+          ls -l build/libs/
+          chmod 644 $GITHUB_WORKSPACE/build/libs/demo-0.0.1-SNAPSHOT.jar
         continue-on-error: true
 
       - name: Run tests
