@@ -29,6 +29,10 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test
 
+      - name: Verify JAR file existence
+        run: ls -l build/libs/
+        continue-on-error: true
+
       - name: Run tests
         run: |
           ./gradlew test --info
