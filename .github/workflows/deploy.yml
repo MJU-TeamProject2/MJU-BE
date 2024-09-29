@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  deploy:
+  build-and-test:
     runs-on: ubuntu-latest
 
     env:
@@ -27,10 +27,24 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
-      - name: Run Test
-        run: ./gradlew test
+      - name: Run tests
+        run: |
+          ./gradlew test --info
+        env:
+          SPRING_DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
+          SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+          SPRING_JPA_SHOW_SQL: "true"
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -58,7 +72,9 @@ jobs:
             sudo systemctl stop tp2-server || true
             sudo mv ~/app.jar /opt/tp2-server/app.jar
             sudo systemctl start tp2-server
+            sudo systemctl status tp2-server
           '
 
       - name: Clean up
+        if: always()
         run: rm -f private_key
