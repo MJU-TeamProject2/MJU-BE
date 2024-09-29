@@ -6,10 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.common.exception.CustomException;
 import com.example.demo.common.security.TokenProvider;
+import com.example.demo.customer.dto.request.ProfileUpdateRequest;
+import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.entity.CustomerAuth;
 import com.example.demo.customer.repository.CustomerRepository;
+import com.example.demo.exception.CustomerAuthNotFoundException;
 import com.example.demo.exception.CustomerErrorCode;
 import com.example.demo.exception.CustomerNotFoundException;
 
@@ -42,8 +45,8 @@ public class CustomerService {
 			throw new CustomException(CustomerErrorCode.CUSTOMER_WRONG_PASSWORD);
 		}
 
-		String accessToken = tokenProvider.createAccessToken(customer.getId());
-		String refreshToken = tokenProvider.createRefreshToken(customer.getId());
+		String accessToken = tokenProvider.createAccessToken(customer.getId(), customer.getRole());
+		String refreshToken = tokenProvider.createRefreshToken(customer.getId(), customer.getRole());
 
 		CustomerAuth customerAuth = customerAuthService.findByCustomerId(customer.getId());
 		customerAuth.updateRefreshToken(refreshToken);
@@ -53,5 +56,18 @@ public class CustomerService {
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
+	}
+
+	@Transactional(readOnly = true)
+	public GetCustomerResponse retrieveProfile(Long customerId) {
+		return GetCustomerResponse.from(customerRepository.findById(customerId).orElseThrow(
+			CustomerAuthNotFoundException::new));
+	}
+
+	@Transactional
+	public void updateProfile(Long customerId, ProfileUpdateRequest profileUpdateRequest) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		customer.update(profileUpdateRequest.email(), profileUpdateRequest.name(), profileUpdateRequest.nickName(),
+			profileUpdateRequest.age(), profileUpdateRequest.phoneNumber());
 	}
 }

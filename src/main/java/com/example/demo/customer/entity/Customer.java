@@ -3,6 +3,7 @@ package com.example.demo.customer.entity;
 import org.springframework.util.StringUtils;
 
 import com.example.demo.common.util.BaseEntity;
+import com.example.demo.common.util.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,5 +49,17 @@ public class Customer extends BaseEntity {
 		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.deleted = false;
+	}
+
+	public Role getRole() {
+		return Role.CUSTOMER;
+	}
+
+	public void update(String email, String name, String nickName, int age, String phoneNumber) {
+		this.email = email;
+		this.name = name;
+		this.nickName = nickName;
+		this.age = age;
+		this.phoneNumber = phoneNumber;
 	}
 }

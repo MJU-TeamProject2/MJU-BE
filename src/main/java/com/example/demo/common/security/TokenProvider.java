@@ -3,15 +3,21 @@ package com.example.demo.common.security;
 import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.common.security.exception.SecurityErrorCode;
 import com.example.demo.common.security.exception.TokenException;
 import com.example.demo.common.security.exception.TokenExpiredException;
+import com.example.demo.common.util.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -32,8 +38,6 @@ public class TokenProvider {
 
 	private final Key secretKey;
 
-	private final String TOKEN_TYPE = "tokenType";
-
 	public TokenProvider(@Value("${spring.jwt.secret}") String secret,
 		@Value("${spring.jwt.access-token-validity-time}") Duration accessTokenValidityTime,
 		@Value("${spring.jwt.refresh-token-validity-time}") Duration refreshTokenValidityTime) {
@@ -42,31 +46,34 @@ public class TokenProvider {
 		this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
 	}
 
-	public String createAccessToken(Long customerId) {
-		return createToken(customerId, "ACCESS", accessTokenValidityTime);
+	public String createAccessToken(Long customerId, Role role) {
+		return createToken(customerId, role, "ACCESS", accessTokenValidityTime);
 	}
 
-	public String createRefreshToken(Long customerId) {
-		return createToken(customerId, "REFRESH", refreshTokenValidityTime);
+	public String createRefreshToken(Long customerId, Role role) {
+		return createToken(customerId, role, "REFRESH", refreshTokenValidityTime);
 	}
 
 	public String createNewAccessTokenFromRefreshToken(String refreshToken) {
 		Claims claims = validateToken(JwtType.REFRESH, refreshToken).getBody();
 
 		Long customerId = Long.parseLong((String)claims.get(Claims.SUBJECT));
-		return createAccessToken(customerId);
+		Role role = Role.valueOf((String) claims.get(CustomClaims.ROLE));
+		return createAccessToken(customerId, role);
 	}
 
-	private String createToken(Long customerId, String tokenType, Duration tokenValidityTime) {
+	private String createToken(Long customerId, Role role, String tokenType, Duration tokenValidityTime) {
 		Instant now = Instant.now();
 		Date currentDate = Date.from(now);
 		Date expiredDate = Date.from(now.plus(tokenValidityTime));
 
+		String TOKEN_TYPE = "tokenType";
 		return Jwts.builder()
 			.setHeader(Map.of("typ", "JWT"))
 			.setSubject(String.valueOf(customerId))
 			.setIssuedAt(currentDate)
 			.setExpiration(expiredDate)
+			.claim(CustomClaims.ROLE, role)
 			.claim(TOKEN_TYPE, tokenType)
 			.signWith(secretKey, SignatureAlgorithm.HS512)
 			.compact();
@@ -92,8 +99,22 @@ public class TokenProvider {
 	}
 
 	private void validateTokenType(Jws<Claims> claimsJws, JwtType jwtType) {
-		if (!jwtType.name().equals(TOKEN_TYPE)) {
+		String tokenType = String.valueOf(claimsJws.getBody().get(CustomClaims.TOKEN_TYPE));
+		if (!jwtType.name().equals(tokenType)) {
 			throw new TokenException(SecurityErrorCode.DISALLOWED_TOKEN_TYPE);
 		}
 	}
+
+	public Authentication getCustomerIdFromToken(String token) {
+		Claims claims = parseClaims(token).getBody();
+		Long id = Long.parseLong(claims.get(Claims.SUBJECT).toString());
+		Collection<? extends GrantedAuthority> authorities = getAuthorities(claims);
+		return new JwtAuthenticationToken(id, authorities);
+	}
+
+	private Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
+		String adminRole = claims.get(CustomClaims.ROLE).toString();
+		return List.of(new SimpleGrantedAuthority(adminRole));
+	}
+
 }

@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.common.dto.SuccessResponse;
+import com.example.demo.common.security.AuthInfo;
 import com.example.demo.common.security.CustomCookieName;
+import com.example.demo.common.security.JwtInfo;
+import com.example.demo.customer.dto.request.ProfileUpdateRequest;
+import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.request.LoginRequest;
 import com.example.demo.customer.dto.request.RegisterRequest;
 import com.example.demo.customer.dto.response.LoginResponse;
@@ -21,7 +25,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/customer")
+@RequestMapping("/api/v1/customer")
 @RequiredArgsConstructor
 public class CustomerControllerImpl implements CustomerController {
 
@@ -52,6 +56,20 @@ public class CustomerControllerImpl implements CustomerController {
 		LoginResponse loginResponse = customerService.login(loginRequest.email(), loginRequest.password());
 		var refreshTokenResponseCookie = getRefreshTokenResponseCookie(loginResponse.refreshToken());
 		return SuccessResponse.of(loginResponse).okWithCookie(refreshTokenResponseCookie);
+	}
+
+	@Override
+	public ResponseEntity<SuccessResponse<GetCustomerResponse>> retrieveProfile(@AuthInfo JwtInfo jwtInfo) {
+		System.out.println(jwtInfo + "  " + jwtInfo.customerId());
+		GetCustomerResponse customerResponse = customerService.retrieveProfile(jwtInfo.customerId());
+		return SuccessResponse.of(customerResponse).asHttp(HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<SuccessResponse<Void>> updateProfile(JwtInfo jwtInfo,
+		ProfileUpdateRequest profileUpdateRequest) {
+		customerService.updateProfile(jwtInfo.customerId(), profileUpdateRequest);
+		return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
 	}
 
 	private ResponseCookie getRefreshTokenResponseCookie(String refreshToken) {
