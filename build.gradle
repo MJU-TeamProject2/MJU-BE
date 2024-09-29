@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1-SNAPSHOT' // 해당 값을 마음대로 수정하면 CI/CD 과정에서 문제가 생길 수 있음. ( 수정해야 하는 경우 deploy.yml에서 실행하는 jar 파일 이름도 같이 바꿔줄 것 )
 
 java {
     toolchain {
