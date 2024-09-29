@@ -54,6 +54,12 @@ jobs:
           SPRING_JPA_HIBERNATE_DDL_AUTO: validate
           SPRING_JPA_SHOW_SQL: "true"
 
+      - name: Upload JAR file
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-jar
+          path: build/libs/demo-0.0.1-SNAPSHOT.jar
+
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -68,8 +74,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Wait for build completion
-        run: sleep 5  # 5초 대기
+      - name: Download JAR file
+        uses: actions/download-artifact@v2
+        with:
+          name: app-jar
+          path: .
 
       - name: Copy files to EC2 with SCP
         env:
@@ -78,7 +87,7 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          JAR_FILE=$(ls /home/runner/work/MJU-BE/MJU-BE/build/libs/demo-0.0.1-SNAPSHOT.jar)  # 절대 경로로 변경
+          JAR_FILE=$(ls demo-0.0.1-SNAPSHOT.jar)
           echo "Deploying $JAR_FILE"
           scp -o StrictHostKeyChecking=no -i private_key $JAR_FILE ${EC2_USER}@${HOST_DNS}:~/app.jar
 
