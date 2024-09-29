@@ -29,6 +29,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test
 
+      - name: Print current directory
+        run: pwd
+
+      - name: List all files in the workspace
+        run: ls -R $GITHUB_WORKSPACE
+
       - name: Verify JAR file existence
         run: ls -l build/libs/
         continue-on-error: true
