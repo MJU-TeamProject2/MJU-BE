@@ -1,7 +1,14 @@
 package com.example.demo.common.exception;
 
-public class CustomException extends RuntimeException{
+import java.io.Serial;
 
+import lombok.Getter;
+
+@Getter
+public class CustomException extends RuntimeException {
+
+	@Serial
+	private static final long serialVersionUID = 6948002959123829946L;
 	private final ErrorCode errorCode;
 
 	public CustomException(ErrorCode errorCode) {
