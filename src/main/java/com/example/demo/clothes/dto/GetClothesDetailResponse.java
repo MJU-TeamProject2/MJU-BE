@@ -32,9 +32,9 @@ public record GetClothesDetailResponse(@Schema(description = "의류 id", requir
 									   @Schema(description = "의류 사이즈 및 사이즈별 수량 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
 									   List<GetClothesSizeResponse> clothesSizeList,
 									   @Schema(description = "의류 Object 파일", requiredMode = Schema.RequiredMode.REQUIRED)
-									   byte[] object) {
+									   String url) {
 
-	public static GetClothesDetailResponse from(Clothes clothes, byte[] clotheObject) {
+	public static GetClothesDetailResponse from(Clothes clothes, String url) {
 		return GetClothesDetailResponse.builder()
 			.clothesId(clothes.getId())
 			.category(clothes.getCategory())
@@ -46,7 +46,7 @@ public record GetClothesDetailResponse(@Schema(description = "의류 id", requir
 			.discount(clothes.getDiscount())
 			.detailUrl(clothes.getDetailUrl())
 			.clothesSizeList(clothes.getClothesSizeList().stream().map(GetClothesSizeResponse::from).toList())
-			.object(clotheObject)
+			.url(url)
 			.build();
 	}
 }

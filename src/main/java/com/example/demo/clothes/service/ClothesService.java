@@ -28,7 +28,10 @@ public class ClothesService {
 	public GetClothesDetailResponse getClothesDetail(Long clothesId) {
 		Clothes clothes = clothesRepository.findById(clothesId).orElseThrow(ClothesNotFoundException::new);
 		String objectKey = clothes.getObjectKey();
-		byte[] s3Object = s3Service.getObject(objectKey);
-		return GetClothesDetailResponse.from(clothes, s3Object);
+		// byte[] s3Object = s3Service.getObject(objectKey);
+
+		String url = s3Service.generatePresignedUrl(objectKey);
+		return GetClothesDetailResponse.from(clothes, url);
 	}
+
 }

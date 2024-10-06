@@ -1,6 +1,7 @@
 package com.example.demo.common.util;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,18 +23,23 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 @Slf4j
 @Component
 public class S3Service {
 
 	private final S3Client s3Client;
+	private final S3Presigner s3Presigner;
 
 	@Value("${aws.s3.bucket}")
 	private String bucketName;
 
-	public S3Service(S3Client s3Client) {
+	public S3Service(S3Client s3Client, S3Presigner s3Presigner) {
 		this.s3Client = s3Client;
+		this.s3Presigner = s3Presigner;
 	}
 
 	public List<String> uploadFiles(List<MultipartFile> multipartFiles, String dirPath) {
@@ -86,5 +92,23 @@ public class S3Service {
 
 		ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(getObjectRequest);
 		return objectBytes.asByteArray();
+	}
+
+	// S3로부터 Object url 받아오기 -> TEST 필요
+	public String generatePresignedUrl(String objectKey) {
+		GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+			.signatureDuration(Duration.ofMinutes(10))
+			.getObjectRequest(request -> request
+				.bucket(bucketName)
+				.key(objectKey))
+			.build();
+
+		PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner
+			.presignGetObject(presignRequest);
+
+		String url = presignedGetObjectRequest.url().toString();
+
+		s3Presigner.close();
+		return url;
 	}
 }
