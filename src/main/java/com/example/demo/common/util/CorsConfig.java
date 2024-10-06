@@ -19,7 +19,7 @@ public class CorsConfig {
 // 프론트엔드 주소 List.of("http://localhost:5173","ec2-52-79-52-146.ap-northeast-2.compute.amazonaws.com")
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
 		configuration.setAllowedHeaders(List.of("*"));
-		configuration.setAllowCredentials(true);
+		configuration.setAllowCredentials(false);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
