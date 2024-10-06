@@ -8,6 +8,7 @@ import com.example.demo.clothes.dto.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.repository.ClothesRepository;
 import com.example.demo.common.dto.PageResponse;
+import com.example.demo.common.util.S3Service;
 import com.example.demo.exception.ClothesNotFoundException;
 import com.example.demo.util.PageUtils;
 
@@ -16,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ClothesService {
+
 	private final ClothesRepository clothesRepository;
+	private final S3Service s3Service;
 
 	public PageResponse<GetClothesResponse> getAllClothes(PageRequest pageRequest) {
 		return PageUtils.toPageResponse(clothesRepository.findAll(pageRequest)).map(GetClothesResponse::from);
@@ -24,6 +27,8 @@ public class ClothesService {
 
 	public GetClothesDetailResponse getClothesDetail(Long clothesId) {
 		Clothes clothes = clothesRepository.findById(clothesId).orElseThrow(ClothesNotFoundException::new);
-		return GetClothesDetailResponse.from(clothes);
+		String objectKey = clothes.getObjectKey();
+		byte[] s3Object = s3Service.getObject(objectKey);
+		return GetClothesDetailResponse.from(clothes, s3Object);
 	}
 }

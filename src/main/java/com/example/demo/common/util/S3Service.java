@@ -14,9 +14,12 @@ import com.example.demo.common.exception.CommonErrorCode;
 import com.example.demo.common.exception.CustomException;
 
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -72,5 +75,16 @@ public class S3Service {
 			.orElseThrow(() -> new IllegalArgumentException("확장자가 없는 파일은 업로드할 수 없습니다."));
 		String uuid = UUID.randomUUID().toString();
 		return uuid + "." + ext;
+	}
+
+	// S3로부터 Object 파일 받아오기 -> TEST 필요
+	public byte[] getObject(String objectKey) {
+		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+			.bucket(bucketName)
+			.key(objectKey)
+			.build();
+
+		ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(getObjectRequest);
+		return objectBytes.asByteArray();
 	}
 }
