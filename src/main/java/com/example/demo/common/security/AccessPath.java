@@ -26,4 +26,10 @@ public final class AccessPath {
 
 		return customerAllowdPath;
 	}
+
+	public MultiValueMap<String, HttpMethod> getAdminAllowedPath() {
+		MultiValueMap<String, HttpMethod> adminAllowedPath = new LinkedMultiValueMap<>();
+		// adminAllowedPath.put("/api/v1/")
+		return adminAllowedPath;
+	}
 }

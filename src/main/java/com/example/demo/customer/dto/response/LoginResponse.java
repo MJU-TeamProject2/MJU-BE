@@ -1,5 +1,7 @@
 package com.example.demo.customer.dto.response;
 
+import com.example.demo.common.util.auth.Role;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -10,5 +12,7 @@ public record LoginResponse(@Schema(description = "로그인한 유저 id", requ
 							@Schema(description = "Access Token", requiredMode = Schema.RequiredMode.REQUIRED)
 							String accessToken,
 							@Schema(description = "Refresh Token", requiredMode = Schema.RequiredMode.REQUIRED)
-							String refreshToken) {
+							String refreshToken,
+							@Schema(description = "Role", requiredMode = Schema.RequiredMode.REQUIRED)
+							Role role) {
 }

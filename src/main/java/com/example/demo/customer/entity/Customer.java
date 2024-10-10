@@ -3,7 +3,7 @@ package com.example.demo.customer.entity;
 import org.springframework.util.StringUtils;
 
 import com.example.demo.common.util.BaseEntity;
-import com.example.demo.common.util.Role;
+import com.example.demo.common.util.auth.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

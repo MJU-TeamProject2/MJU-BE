@@ -1,4 +1,4 @@
-package com.example.demo.customer.entity;
+package com.example.demo.common.util.auth;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,23 +11,23 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class CustomerAuth {
+public class Auth {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "customer_auth_id", columnDefinition = "INTEGER")
+	@Column(name = "member_auth_id", columnDefinition = "INTEGER")
 	private Integer id;
 
 	private String refreshToken;
 
-	private Long customerId;
+	private String code;
 
-	public CustomerAuth(String refreshToken, Long customerId) {
+	public Auth(String refreshToken, String code) {
 		this.refreshToken = refreshToken;
-		this.customerId = customerId;
+		this.code = code;
 	}
 
-	public static CustomerAuth createAuth(Long customerId) {
-		return new CustomerAuth(null, customerId);
+	public static Auth createAuth(String code) {
+		return new Auth(null, code);
 	}
 
 	public void updateRefreshToken(String newRefreshToken) {
