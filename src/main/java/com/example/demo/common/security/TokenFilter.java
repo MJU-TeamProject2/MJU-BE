@@ -91,6 +91,9 @@ public class TokenFilter extends OncePerRequestFilter {
 				if (authority.equals(Role.CUSTOMER)) {
 					return isRequestMatch(accessPath.getCustomerAllowdPath(), request);
 				}
+				else if(authority.equals(Role.ADMIN)) {
+					return isRequestMatch(accessPath.getAdminAllowedPath(), request);
+				}
 				return false;
 			});
 

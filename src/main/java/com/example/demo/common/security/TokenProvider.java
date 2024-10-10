@@ -113,8 +113,8 @@ public class TokenProvider {
 	}
 
 	private Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
-		String adminRole = claims.get(CustomClaims.ROLE).toString();
-		return List.of(new SimpleGrantedAuthority(adminRole));
+		String role = claims.get(CustomClaims.ROLE).toString();
+		return List.of(new SimpleGrantedAuthority(role));
 	}
 
 }

@@ -55,6 +55,7 @@ public class CustomerService {
 			.customerId(customer.getId())
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
+			.role(customer.getRole())
 			.build();
 	}
 
