@@ -1,6 +1,6 @@
 package com.example.demo.customer.dto.response;
 
-import com.example.demo.common.util.Role;
+import com.example.demo.common.util.auth.Role;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

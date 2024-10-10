@@ -1,4 +1,4 @@
-package com.example.demo.common.util;
+package com.example.demo.common.util.auth;
 
 import lombok.Getter;
 

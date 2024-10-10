@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.demo.common.security.exception.SecurityErrorCode;
 import com.example.demo.common.security.exception.TokenException;
 import com.example.demo.common.security.exception.TokenExpiredException;
-import com.example.demo.common.util.Role;
+import com.example.demo.common.util.auth.Role;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
