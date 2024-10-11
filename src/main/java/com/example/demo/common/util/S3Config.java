@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -34,8 +33,9 @@ public class S3Config {
 
 	@Bean
 	public S3Presigner s3Presigner() {
+		AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretAccessKey);
 		return S3Presigner.builder()
-			.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+			.credentialsProvider(StaticCredentialsProvider.create(awsCreds))
 			.region(Region.of(region))
 			.build();
 	}
