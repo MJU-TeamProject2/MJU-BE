@@ -51,7 +51,7 @@ public class ClothesControllerImpl implements ClothesController {
 	}
 
 	@Override
-	@GetMapping("/{clothesId}/download/object")
+	@GetMapping("/download/{clothesId}")
 	public ResponseEntity<byte[]> getClothesObject(@PathVariable Long clothesId) {
 		GetClothesObject getClothesObject = clothesService.getClothesObject(clothesId);
 		HttpHeaders headers = new HttpHeaders();

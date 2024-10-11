@@ -46,7 +46,7 @@ public interface ClothesController {
 			responseCode = "200",
 			description = "성공적으로 조회")
 	})
-	@GetMapping("/{clothesId}/download/object")
+	@GetMapping("/download/{clothesId}")
 	ResponseEntity<byte[]> getClothesObject(
 		@PathVariable Long clothesId
 	);
