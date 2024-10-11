@@ -29,7 +29,8 @@ public final class AccessPath {
 
 	public MultiValueMap<String, HttpMethod> getAdminAllowedPath() {
 		MultiValueMap<String, HttpMethod> adminAllowedPath = new LinkedMultiValueMap<>();
-		// adminAllowedPath.put("/api/v1/")
+		// clothes
+		adminAllowedPath.put("/api/v1/clothes/product", List.of(HttpMethod.POST));
 		return adminAllowedPath;
 	}
 }

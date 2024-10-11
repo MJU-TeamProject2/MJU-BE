@@ -17,7 +17,8 @@ import jakarta.validation.constraints.NotNull;
 @Schema(name = "CreateClothesRequest", description = "상품 등록 요청")
 public record CreateClothesRequest(
 	@Schema(description = "상품 카테고리", requiredMode = Schema.RequiredMode.REQUIRED,
-								   example = "SHOES, TOPS, OUTERWEAR, PANTS, DRESSES", implementation = ClothesCategory.class)
+								   example = "SHOES, TOPS, OUTERWEAR, PANTS, DRESSES",
+								   implementation = ClothesCategory.class)
 								   @ClotheCategoryValidation.ValidClotheCategory
 								   ClothesCategory category,
 	@Schema(description = "상품 이름", requiredMode = Schema.RequiredMode.REQUIRED,

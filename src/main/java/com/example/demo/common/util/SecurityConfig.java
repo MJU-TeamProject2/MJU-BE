@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.example.demo.common.security.AccessPath;
 import com.example.demo.common.security.TokenFilter;
 import com.example.demo.common.security.TokenProvider;
+import com.example.demo.common.util.auth.Role;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +32,8 @@ public class SecurityConfig {
 		http
 			.cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
 			.authorizeHttpRequests(authz -> authz
-				.requestMatchers("http://localhost:8080/api/v1/customer/profile").authenticated()
+				.requestMatchers("http://localhost:8080/api/v1/customer/profile").hasRole(Role.CUSTOMER.toString())
+				.requestMatchers("http://localhost:8080/api/v1/clothes/product").hasRole(Role.ADMIN.toString())
 				.anyRequest().permitAll())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.csrf(AbstractHttpConfigurer::disable)

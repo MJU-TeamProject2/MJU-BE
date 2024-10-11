@@ -13,6 +13,8 @@ import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.common.dto.PageResponse;
 import com.example.demo.common.dto.SuccessResponse;
+import com.example.demo.common.security.AuthInfo;
+import com.example.demo.common.security.JwtInfo;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +33,7 @@ public interface ClothesController {
 	})
 	@PostMapping(value = "/product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	ResponseEntity<SuccessResponse<Void>> createProduct(
-		@Valid @ModelAttribute CreateClothesRequest createClothesRequest);
+		@AuthInfo JwtInfo jwtInfo, @Valid @ModelAttribute CreateClothesRequest createClothesRequest);
 
 	@Operation(summary = "의류 전체 조회", description = "Page에 맞게 의류 조회")
 	@ApiResponses(value = {
@@ -55,4 +57,14 @@ public interface ClothesController {
 		@PathVariable Long clothesId
 	);
 
+	@Operation(summary = "의류 Obj 파일 다운", description = "특정 의류 Obj 파일 바로 다운")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 조회")
+	})
+	@GetMapping("/download/{clothesId}")
+	ResponseEntity<byte[]> getClothesObject(
+		@PathVariable Long clothesId
+	);
 }
