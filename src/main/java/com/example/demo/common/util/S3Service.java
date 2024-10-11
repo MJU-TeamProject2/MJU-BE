@@ -83,7 +83,6 @@ public class S3Service {
 		return uuid + "." + ext;
 	}
 
-	// S3로부터 Object 파일 받아오기 -> TEST 필요
 	public byte[] getObject(String objectKey) {
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
 			.bucket(bucketName)
@@ -94,7 +93,6 @@ public class S3Service {
 		return objectBytes.asByteArray();
 	}
 
-	// S3로부터 Object url 받아오기 -> TEST 필요
 	public String generatePresignedUrl(String objectKey) {
 		GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
 			.signatureDuration(Duration.ofMinutes(10))
