@@ -3,12 +3,16 @@ package com.example.demo.clothes.service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
+import com.example.demo.clothes.entity.ClothesSize;
 import com.example.demo.clothes.repository.ClothesRepository;
 import com.example.demo.common.dto.PageResponse;
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.common.util.S3Service;
+import com.example.demo.exception.ClothesErrorCode;
 import com.example.demo.exception.ClothesNotFoundException;
 import com.example.demo.util.PageUtils;
 
@@ -34,4 +38,40 @@ public class ClothesService {
 		return GetClothesDetailResponse.from(clothes, url);
 	}
 
+	public void createProduct(CreateClothesRequest createClothesRequest) {
+		checkProductDuplicate(createClothesRequest.productNumber());
+
+		String mainUrl = s3Service.uploadFile(createClothesRequest.mainImage(),
+			createClothesRequest.category().toString());
+		String detailUrl = s3Service.uploadFile(createClothesRequest.detailImage(),
+			createClothesRequest.category().toString());
+		String objectKey = s3Service.uploadFile(createClothesRequest.objectFile(), "object");
+
+		Clothes clothe = Clothes.builder()
+			.category(createClothesRequest.category())
+			.imageUrl(mainUrl)
+			.name(createClothesRequest.name())
+			.price(createClothesRequest.price())
+			.genderCategory(createClothesRequest.genderCategory())
+			.productNumber(createClothesRequest.productNumber())
+			.discount(createClothesRequest.discount())
+			.detailUrl(detailUrl)
+			.objectKey(objectKey)
+			.build();
+
+		ClothesSize clothesSize = ClothesSize.builder()
+			.clothes(clothe)
+			.size(createClothesRequest.size())
+			.quantity(createClothesRequest.quantity())
+			.build();
+
+		clothe.getClothesSizeList().add(clothesSize);
+		clothesRepository.save(clothe);
+	}
+
+	private void checkProductDuplicate(String productNumber) {
+		if(clothesRepository.findByProductNumber(productNumber).isPresent()) {
+			throw new CustomException(ClothesErrorCode.CLOTHES_DUPLICATE);
+		};
+	}
 }

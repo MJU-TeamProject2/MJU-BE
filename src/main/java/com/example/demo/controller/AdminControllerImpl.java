@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.admin.dto.request.AdminLoginRequest;
 import com.example.demo.admin.dto.response.AdminLoginResponse;
 import com.example.demo.admin.service.AdminService;
-import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.common.security.CustomCookieName;
 
@@ -26,11 +25,6 @@ public class AdminControllerImpl implements AdminController {
 		AdminLoginResponse adminLoginResponse = adminService.login(adminLoginRequest.code(), adminLoginRequest.password());
 		var refreshTokenResponseCookie = getRefreshTokenResponseCookie(adminLoginResponse.refreshToken());
 		return SuccessResponse.of(adminLoginResponse).okWithCookie(refreshTokenResponseCookie);
-	}
-
-	@Override
-	public ResponseEntity<SuccessResponse<Void>> registrationProduct(CreateClothesRequest createClothesRequest) {
-		return null;
 	}
 
 	private ResponseCookie getRefreshTokenResponseCookie(String refreshToken) {

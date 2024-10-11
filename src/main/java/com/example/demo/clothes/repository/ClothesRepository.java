@@ -12,4 +12,6 @@ public interface ClothesRepository extends JpaRepository<Clothes, Long> {
 	Page<Clothes> findAll(Pageable pageable);
 
 	Optional<Clothes> findById(Long clothesId);
+
+	Optional<Clothes> findByProductNumber(String productNumber);
 }
