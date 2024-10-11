@@ -3,8 +3,8 @@ package com.example.demo.clothes.service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.clothes.dto.GetClothesDetailResponse;
-import com.example.demo.clothes.dto.GetClothesResponse;
+import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
+import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.repository.ClothesRepository;
 import com.example.demo.common.dto.PageResponse;

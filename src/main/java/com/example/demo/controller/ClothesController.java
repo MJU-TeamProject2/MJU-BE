@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.clothes.dto.GetClothesDetailResponse;
-import com.example.demo.clothes.dto.GetClothesResponse;
+import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
+import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.common.dto.PageResponse;
 import com.example.demo.common.dto.SuccessResponse;
 
