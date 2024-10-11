@@ -4,6 +4,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.clothes.dto.GetClothesDetailResponse;
+import com.example.demo.clothes.dto.GetClothesObject;
 import com.example.demo.clothes.dto.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.repository.ClothesRepository;
@@ -28,10 +29,17 @@ public class ClothesService {
 	public GetClothesDetailResponse getClothesDetail(Long clothesId) {
 		Clothes clothes = clothesRepository.findById(clothesId).orElseThrow(ClothesNotFoundException::new);
 		String objectKey = clothes.getObjectKey();
-		// byte[] s3Object = s3Service.getObject(objectKey);
 
 		String url = s3Service.generatePresignedUrl(objectKey);
 		return GetClothesDetailResponse.from(clothes, url);
 	}
 
+	public GetClothesObject getClothesObject(Long clothesId) {
+		Clothes clothes = clothesRepository.findById(clothesId).orElseThrow(ClothesNotFoundException::new);
+		String objectKey = clothes.getObjectKey();
+		byte[] s3Object = s3Service.getObject(objectKey);
+		String filename = objectKey.substring(objectKey.lastIndexOf("/") + 1);
+
+		return GetClothesObject.of(clothesId, s3Object, filename);
+	}
 }

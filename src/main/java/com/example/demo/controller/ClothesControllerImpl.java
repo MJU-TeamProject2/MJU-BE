@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.clothes.dto.GetClothesDetailResponse;
+import com.example.demo.clothes.dto.GetClothesObject;
 import com.example.demo.clothes.dto.GetClothesResponse;
 import com.example.demo.clothes.service.ClothesService;
 import com.example.demo.common.dto.PageResponse;
@@ -44,5 +45,12 @@ public class ClothesControllerImpl implements ClothesController {
 	public ResponseEntity<SuccessResponse<GetClothesDetailResponse>> getClothesDetail(@PathVariable Long clothesId) {
 		GetClothesDetailResponse getClothesDetailResponse = clothesService.getClothesDetail(clothesId);
 		return SuccessResponse.of(getClothesDetailResponse).asHttp(HttpStatus.OK);
+	}
+
+	@Override
+	@GetMapping("/{clothesId}/download/object")
+	public ResponseEntity<SuccessResponse<byte[]>> getClothesObject(@PathVariable Long clothesId) {
+		GetClothesObject getClothesObject = clothesService.getClothesObject(clothesId);
+		return SuccessResponse.of(getClothesObject.file()).okWithByteFile(getClothesObject);
 	}
 }

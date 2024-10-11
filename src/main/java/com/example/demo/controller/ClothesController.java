@@ -40,4 +40,14 @@ public interface ClothesController {
 		@PathVariable Long clothesId
 	);
 
+	@Operation(summary = "의류 Obj 파일 다운", description = "특정 의류 Obj 파일 바로 다운")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 조회")
+	})
+	@GetMapping("/{clothesId}/download/object")
+	ResponseEntity<SuccessResponse<byte[]>> getClothesObject(
+		@PathVariable Long clothesId
+	);
 }
