@@ -39,4 +39,5 @@ public interface ClothesController {
 	ResponseEntity<SuccessResponse<GetClothesDetailResponse>> getClothesDetail(
 		@PathVariable Long clothesId
 	);
+
 }
