@@ -40,10 +40,12 @@ public class AdminService {
 		adminAuth.updateRefreshToken(refreshToken);
 
 		return AdminLoginResponse.builder()
+			.id(admin.getId())
 			.name(admin.getName())
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.role(admin.getRole())
 			.build();
 	}
+
 }

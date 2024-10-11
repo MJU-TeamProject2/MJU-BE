@@ -66,7 +66,8 @@ public class TokenFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
-		return !isRequestMatch(accessPath.getCustomerAllowdPath(), request);
+		return !isRequestMatch(accessPath.getCustomerAllowedPath(), request) && !isRequestMatch(
+			accessPath.getAdminAllowedPath(), request);
 	}
 
 	private boolean isRequestMatch(MultiValueMap<String, HttpMethod> ignoredPaths, HttpServletRequest request) {
@@ -89,7 +90,7 @@ public class TokenFilter extends OncePerRequestFilter {
 			.map(Role::valueOf)
 			.anyMatch(authority -> {
 				if (authority.equals(Role.CUSTOMER)) {
-					return isRequestMatch(accessPath.getCustomerAllowdPath(), request);
+					return isRequestMatch(accessPath.getCustomerAllowedPath(), request);
 				}
 				else if(authority.equals(Role.ADMIN)) {
 					return isRequestMatch(accessPath.getAdminAllowedPath(), request);

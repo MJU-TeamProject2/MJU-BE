@@ -13,24 +13,27 @@ import lombok.Getter;
 @Getter
 public final class AccessPath {
 
-	private final MultiValueMap<String, HttpMethod> customerAllowdPath;
+	private final MultiValueMap<String, HttpMethod> customerAllowedPath;
+	private final MultiValueMap<String, HttpMethod> adminAllowedPath;
 
 	private AccessPath() {
-		customerAllowdPath = initCustomerAllowedPath();
+		customerAllowedPath = initMemberAllowedPath();
+		adminAllowedPath = initAdminAllowedPath();
 	}
 
-	private MultiValueMap<String, HttpMethod> initCustomerAllowedPath() {
-		MultiValueMap<String, HttpMethod> customerAllowdPath = new LinkedMultiValueMap<>();
+	private MultiValueMap<String, HttpMethod> initMemberAllowedPath() {
+		MultiValueMap<String, HttpMethod> customerAllowedPath = new LinkedMultiValueMap<>();
 		// review
-		customerAllowdPath.put("/api/v1/customer/profile", List.of(HttpMethod.GET, HttpMethod.PATCH));
+		customerAllowedPath.put("/api/v1/customer/profile", List.of(HttpMethod.GET, HttpMethod.PATCH));
 
-		return customerAllowdPath;
+		return customerAllowedPath;
 	}
 
-	public MultiValueMap<String, HttpMethod> getAdminAllowedPath() {
+	private MultiValueMap<String, HttpMethod> initAdminAllowedPath() {
 		MultiValueMap<String, HttpMethod> adminAllowedPath = new LinkedMultiValueMap<>();
 		// clothes
 		adminAllowedPath.put("/api/v1/clothes/product", List.of(HttpMethod.POST));
+		adminAllowedPath.put("/api/v1/admin/test", List.of(HttpMethod.GET));
 		return adminAllowedPath;
 	}
 }

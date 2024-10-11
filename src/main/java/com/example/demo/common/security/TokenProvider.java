@@ -46,23 +46,23 @@ public class TokenProvider {
 		this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
 	}
 
-	public String createAccessToken(Long customerId, Role role) {
-		return createToken(customerId, role, "ACCESS", accessTokenValidityTime);
+	public String createAccessToken(Long memberId, Role role) {
+		return createToken(memberId, role, "ACCESS", accessTokenValidityTime);
 	}
 
-	public String createRefreshToken(Long customerId, Role role) {
-		return createToken(customerId, role, "REFRESH", refreshTokenValidityTime);
+	public String createRefreshToken(Long memberId, Role role) {
+		return createToken(memberId, role, "REFRESH", refreshTokenValidityTime);
 	}
 
 	public String createNewAccessTokenFromRefreshToken(String refreshToken) {
 		Claims claims = validateToken(JwtType.REFRESH, refreshToken).getBody();
 
-		Long customerId = Long.parseLong((String)claims.get(Claims.SUBJECT));
+		Long memberId = Long.parseLong((String)claims.get(Claims.SUBJECT));
 		Role role = Role.valueOf((String) claims.get(CustomClaims.ROLE));
-		return createAccessToken(customerId, role);
+		return createAccessToken(memberId, role);
 	}
 
-	private String createToken(Long customerId, Role role, String tokenType, Duration tokenValidityTime) {
+	private String createToken(Long memberId, Role role, String tokenType, Duration tokenValidityTime) {
 		Instant now = Instant.now();
 		Date currentDate = Date.from(now);
 		Date expiredDate = Date.from(now.plus(tokenValidityTime));
@@ -70,7 +70,7 @@ public class TokenProvider {
 		String TOKEN_TYPE = "tokenType";
 		return Jwts.builder()
 			.setHeader(Map.of("typ", "JWT"))
-			.setSubject(String.valueOf(customerId))
+			.setSubject(String.valueOf(memberId))
 			.setIssuedAt(currentDate)
 			.setExpiration(expiredDate)
 			.claim(CustomClaims.ROLE, role)
