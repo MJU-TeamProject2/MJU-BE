@@ -7,7 +7,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
     show-sql: true
   jwt:
@@ -35,3 +35,7 @@ aws:
     bucket: ${S3_BUCKET_NAME}
   region:
     static: ${AWS_REGION}
+
+admin:
+  code: ${ADMIN_CODE}
+  password: ${ADMIN_PASSWORD}
