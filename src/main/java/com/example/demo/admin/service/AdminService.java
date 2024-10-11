@@ -11,7 +11,7 @@ import com.example.demo.common.security.TokenProvider;
 import com.example.demo.common.util.auth.Auth;
 import com.example.demo.common.util.auth.AuthService;
 import com.example.demo.exception.AdminErrorCode;
-import com.example.demo.exception.CustomerNotFoundException;
+import com.example.demo.exception.AdminNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +27,7 @@ public class AdminService {
 
 	public AdminLoginResponse login(String code, String password) {
 		Admin admin = adminRepository.findByCode(code)
-			.orElseThrow(CustomerNotFoundException::new);
+			.orElseThrow(AdminNotFoundException::new);
 		if (!passwordEncoder.matches(password, admin.getPassword())) {
 			throw new CustomException(AdminErrorCode.ADMIN_WRONG_PASSWORD);
 		}
