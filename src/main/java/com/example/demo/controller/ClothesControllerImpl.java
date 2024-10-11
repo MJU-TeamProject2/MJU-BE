@@ -2,7 +2,10 @@ package com.example.demo.controller;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.clothes.dto.GetClothesDetailResponse;
+import com.example.demo.clothes.dto.GetClothesObject;
 import com.example.demo.clothes.dto.GetClothesResponse;
 import com.example.demo.clothes.service.ClothesService;
 import com.example.demo.common.dto.PageResponse;
@@ -44,5 +48,21 @@ public class ClothesControllerImpl implements ClothesController {
 	public ResponseEntity<SuccessResponse<GetClothesDetailResponse>> getClothesDetail(@PathVariable Long clothesId) {
 		GetClothesDetailResponse getClothesDetailResponse = clothesService.getClothesDetail(clothesId);
 		return SuccessResponse.of(getClothesDetailResponse).asHttp(HttpStatus.OK);
+	}
+
+	@Override
+	@GetMapping("/download/{clothesId}")
+	public ResponseEntity<byte[]> getClothesObject(@PathVariable Long clothesId) {
+		GetClothesObject getClothesObject = clothesService.getClothesObject(clothesId);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headers.setContentDisposition(ContentDisposition.builder("attachment")
+			.filename(getClothesObject.fileName())
+			.build());
+
+		return ResponseEntity.ok()
+			.headers(headers)
+			.contentLength(getClothesObject.file().length)
+			.body(getClothesObject.file());
 	}
 }
