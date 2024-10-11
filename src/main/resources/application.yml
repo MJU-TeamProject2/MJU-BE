@@ -7,7 +7,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
     show-sql: true
   jwt:
@@ -26,3 +26,7 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+admin:
+  code: ${ADMIN_CODE}
+  password: ${ADMIN_PASSWORD}
