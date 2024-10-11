@@ -2,7 +2,10 @@ package com.example.demo.controller;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,8 +52,17 @@ public class ClothesControllerImpl implements ClothesController {
 
 	@Override
 	@GetMapping("/{clothesId}/download/object")
-	public ResponseEntity<SuccessResponse<byte[]>> getClothesObject(@PathVariable Long clothesId) {
+	public ResponseEntity<byte[]> getClothesObject(@PathVariable Long clothesId) {
 		GetClothesObject getClothesObject = clothesService.getClothesObject(clothesId);
-		return SuccessResponse.of(getClothesObject.file()).okWithByteFile(getClothesObject);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headers.setContentDisposition(ContentDisposition.builder("attachment")
+			.filename(getClothesObject.fileName())
+			.build());
+
+		return ResponseEntity.ok()
+			.headers(headers)
+			.contentLength(getClothesObject.file().length)
+			.body(getClothesObject.file());
 	}
 }
