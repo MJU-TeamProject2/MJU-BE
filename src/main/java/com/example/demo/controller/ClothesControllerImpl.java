@@ -18,6 +18,7 @@ import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesObject;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
+import com.example.demo.clothes.entity.ClothesCategory;
 import com.example.demo.clothes.service.ClothesService;
 import com.example.demo.common.dto.PageResponse;
 import com.example.demo.common.dto.SuccessResponse;
@@ -75,5 +76,14 @@ public class ClothesControllerImpl implements ClothesController {
 			.headers(headers)
 			.contentLength(getClothesObject.file().length)
 			.body(getClothesObject.file());
+	}
+
+	@Override
+	public ResponseEntity<SuccessResponse<PageResponse<GetClothesResponse>>> getClothesByCategory(
+		ClothesCategory clothesCategory, int size, int page, String sortOption) {
+		Sort sort = SortUtils.createSort(sortOption);
+		PageRequest pageRequest = PageRequest.of(page, size, sort);
+		return SuccessResponse.of(clothesService.getClothesByCategory(pageRequest, clothesCategory))
+			.asHttp(HttpStatus.OK);
 	}
 }

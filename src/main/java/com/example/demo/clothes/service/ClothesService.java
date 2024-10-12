@@ -9,6 +9,7 @@ import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.dto.response.GetClothesObject;
 
 import com.example.demo.clothes.entity.Clothes;
+import com.example.demo.clothes.entity.ClothesCategory;
 import com.example.demo.clothes.entity.ClothesSize;
 import com.example.demo.clothes.repository.ClothesRepository;
 import com.example.demo.common.dto.PageResponse;
@@ -84,5 +85,10 @@ public class ClothesService {
 			throw new CustomException(ClothesErrorCode.CLOTHES_DUPLICATE);
 		}
 
+	}
+
+	public PageResponse<GetClothesResponse> getClothesByCategory(PageRequest pageRequest, ClothesCategory clothesCategory) {
+		return PageUtils.toPageResponse(clothesRepository.findByCategory(pageRequest, clothesCategory))
+			.map(GetClothesResponse::from);
 	}
 }
