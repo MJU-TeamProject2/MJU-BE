@@ -1,4 +1,6 @@
 package com.example.demo.common.security;
 
-public record JwtInfo(Long customerId) {
+import com.example.demo.common.util.auth.Role;
+
+public record JwtInfo(Long memberId, Role role) {
 }

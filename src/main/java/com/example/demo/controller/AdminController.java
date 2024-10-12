@@ -25,5 +25,4 @@ public interface AdminController {
 	@PostMapping(value = "/login")
 	ResponseEntity<SuccessResponse<AdminLoginResponse>> login(@RequestBody AdminLoginRequest adminLoginRequest);
 
-
 }

@@ -1,4 +1,4 @@
-package com.example.demo.clothes.dto;
+package com.example.demo.clothes.dto.response;
 
 import com.example.demo.clothes.entity.ClothesSize;
 import com.example.demo.clothes.entity.Size;

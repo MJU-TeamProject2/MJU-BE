@@ -2,6 +2,7 @@ package com.example.demo.admin.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.admin.dto.response.AdminLoginResponse;
 import com.example.demo.admin.entity.Admin;
@@ -24,7 +25,7 @@ public class AdminService {
 	private final AuthService authService;
 	private final AdminRepository adminRepository;
 
-
+	@Transactional
 	public AdminLoginResponse login(String code, String password) {
 		Admin admin = adminRepository.findByCode(code)
 			.orElseThrow(AdminNotFoundException::new);
@@ -39,10 +40,12 @@ public class AdminService {
 		adminAuth.updateRefreshToken(refreshToken);
 
 		return AdminLoginResponse.builder()
+			.id(admin.getId())
 			.name(admin.getName())
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.role(admin.getRole())
 			.build();
 	}
+
 }

@@ -42,6 +42,26 @@ public class S3Service {
 		this.s3Presigner = s3Presigner;
 	}
 
+	public String uploadFile(MultipartFile file, String dirPath) {
+		try {
+			String key = dirPath + "/" + createRandomFileName(file.getOriginalFilename());
+
+			PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+				.bucket(bucketName)
+				.key(key)
+				.contentType(FileExtensionUtils.getContentType(file.getOriginalFilename()))
+				.contentLength(file.getSize())
+				.build();
+
+			s3Client.putObject(putObjectRequest,
+				RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+
+			return key;
+		} catch (IOException | S3Exception e) {
+			throw new CustomException(CommonErrorCode.FILE_UPLOAD_FAILED, e);
+		}
+	}
+
 	public List<String> uploadFiles(List<MultipartFile> multipartFiles, String dirPath) {
 		return multipartFiles.stream().map(multipartFile -> {
 			try {
