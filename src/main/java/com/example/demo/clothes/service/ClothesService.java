@@ -7,6 +7,7 @@ import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.dto.response.GetClothesObject;
+
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.entity.ClothesSize;
 import com.example.demo.clothes.repository.ClothesRepository;
@@ -76,7 +77,6 @@ public class ClothesService {
 		String filename = objectKey.substring(objectKey.lastIndexOf("/") + 1);
 
 		return GetClothesObject.of(clothesId, s3Object, filename);
-
 	}
 
 	private void checkProductDuplicate(String productNumber) {
