@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
+import com.example.demo.clothes.entity.ClothesCategory;
 import com.example.demo.common.dto.PageResponse;
 import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.common.security.AuthInfo;
@@ -67,4 +68,18 @@ public interface ClothesController {
 	ResponseEntity<byte[]> getClothesObject(
 		@PathVariable Long clothesId
 	);
+
+	@Operation(summary = "카테고리별 의상 조회", description = "카테고리에 따른 의상 조회")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 조회"
+		)
+	})
+	@GetMapping("/by/{category}")
+	ResponseEntity<SuccessResponse<PageResponse<GetClothesResponse>>> getClothesByCategory(
+		@PathVariable(value = "category") ClothesCategory clothesCategory,
+		@RequestParam(value = "size", required = false, defaultValue = "20") int size,
+		@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+		@RequestParam(name = "sort", required = false, defaultValue = "LATEST") String sortOptions);
 }
