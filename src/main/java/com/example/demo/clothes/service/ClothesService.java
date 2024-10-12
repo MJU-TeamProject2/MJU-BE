@@ -34,4 +34,8 @@ public class ClothesService {
 		return GetClothesDetailResponse.from(clothes, url);
 	}
 
+	public Clothes findById(Long clothesId) {
+		return clothesRepository.findById(clothesId).orElseThrow(ClothesNotFoundException::new);
+	}
+
 }
