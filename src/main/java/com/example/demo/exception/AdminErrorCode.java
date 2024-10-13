@@ -1,13 +1,14 @@
-package com.example.demo.common.exception;
+package com.example.demo.exception;
+
+import com.example.demo.common.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum CommonErrorCode implements ErrorCode {
+public enum AdminErrorCode implements ErrorCode{
 
-	INVALID_INPUT_VALUE(400, "C001", "잘못된 입력값입니다."),
-	INVALID_SERVER_ERROR(500, "C001", "서버 오류"),
-	FILE_UPLOAD_FAILED(400, "C004", "파일 업로드에 실패했습니다.");
+	ADMIN_WRONG_PASSWORD(400, "A001", "비밀번호가 일치하지 않습니다."),
+	ADMIN_NOT_FOUND(401, "A002", "관리자를 찾을 수 없습니다.");
 
 	private final int status;
 	private final String code;

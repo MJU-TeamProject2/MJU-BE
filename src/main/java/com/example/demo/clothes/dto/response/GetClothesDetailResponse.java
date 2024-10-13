@@ -1,4 +1,4 @@
-package com.example.demo.clothes.dto;
+package com.example.demo.clothes.dto.response;
 
 import java.util.List;
 
@@ -30,9 +30,11 @@ public record GetClothesDetailResponse(@Schema(description = "의류 id", requir
 									   @Schema(description = "의류 상세설명 이미지(페이지)", requiredMode = Schema.RequiredMode.REQUIRED)
 									   String detailUrl,
 									   @Schema(description = "의류 사이즈 및 사이즈별 수량 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
-									   List<GetClothesSizeResponse> clothesSizeList) {
+									   List<GetClothesSizeResponse> clothesSizeList,
+									   @Schema(description = "의류 Object 파일", requiredMode = Schema.RequiredMode.REQUIRED)
+									   String url) {
 
-	public static GetClothesDetailResponse from(Clothes clothes) {
+	public static GetClothesDetailResponse from(Clothes clothes, String url) {
 		return GetClothesDetailResponse.builder()
 			.clothesId(clothes.getId())
 			.category(clothes.getCategory())
@@ -44,6 +46,7 @@ public record GetClothesDetailResponse(@Schema(description = "의류 id", requir
 			.discount(clothes.getDiscount())
 			.detailUrl(clothes.getDetailUrl())
 			.clothesSizeList(clothes.getClothesSizeList().stream().map(GetClothesSizeResponse::from).toList())
+			.url(url)
 			.build();
 	}
 }

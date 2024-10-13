@@ -40,10 +40,12 @@ public class Clothes extends BaseEntity {
 	private String detailUrl;
 	@OneToMany(mappedBy = "clothes")
 	private List<ClothesSize> clothesSizeList;
+	// 의상 object path
+	private String objectKey;
 
 	@Builder
 	public Clothes(Long id, ClothesCategory category, String imageUrl, String name, Integer price,
-		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl) {
+		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl, String objectKey) {
 		this.id = id;
 		this.category = category;
 		this.imageUrl = imageUrl;
@@ -54,5 +56,6 @@ public class Clothes extends BaseEntity {
 		this.discount = discount;
 		this.detailUrl = detailUrl;
 		this.clothesSizeList = new ArrayList<>();
+		this.objectKey = objectKey;
 	}
 }
