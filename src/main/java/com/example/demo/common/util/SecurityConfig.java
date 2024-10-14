@@ -30,9 +30,7 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
-			.authorizeHttpRequests(authz -> authz
-				.requestMatchers("http://localhost:8080/api/v1/customer/profile").authenticated()
-				.anyRequest().permitAll())
+			.authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
