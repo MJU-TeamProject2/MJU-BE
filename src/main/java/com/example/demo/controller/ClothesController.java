@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +37,27 @@ public interface ClothesController {
 	@PostMapping(value = "/product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	ResponseEntity<SuccessResponse<Void>> createProduct(
 		@AuthInfo JwtInfo jwtInfo, @Valid @ModelAttribute CreateClothesRequest createClothesRequest);
+
+	@Operation(summary = "상품 정보 수정", description = "상품 정보 수정을 위한 API")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 상품 수정 완료")
+	})
+	@PatchMapping(value = "/products/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	ResponseEntity<SuccessResponse<Void>> updateProduct(
+		@AuthInfo JwtInfo jwtInfo, @Valid @ModelAttribute UpdateClothesRequest updateClothesRequest,
+		@PathVariable Long productId);
+
+	@Operation(summary = "상품 삭제", description = "상품 삭제를 위한 API")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 상품 삭제 완료")
+	})
+	@DeleteMapping(value = "/products/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	ResponseEntity<SuccessResponse<Void>> deleteProduct(
+		@AuthInfo JwtInfo jwtInfo, @PathVariable Long productId);
 
 	@Operation(summary = "의류 전체 조회", description = "Page에 맞게 의류 조회")
 	@ApiResponses(value = {
