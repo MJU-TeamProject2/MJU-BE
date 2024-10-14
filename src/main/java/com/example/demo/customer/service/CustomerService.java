@@ -72,4 +72,8 @@ public class CustomerService {
 		customer.update(profileUpdateRequest.email(), profileUpdateRequest.name(), profileUpdateRequest.nickName(),
 			profileUpdateRequest.age(), profileUpdateRequest.phoneNumber());
 	}
+
+	public Customer findById(Long customerId) {
+		return customerRepository.findById(customerId).orElseThrow(CustomerNotFoundException::new);
+	}
 }

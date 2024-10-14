@@ -91,4 +91,8 @@ public class ClothesService {
 		return PageUtils.toPageResponse(clothesRepository.findByCategory(pageRequest, clothesCategory))
 			.map(GetClothesResponse::from);
 	}
+	public Clothes findById(Long clothesId) {
+		return clothesRepository.findById(clothesId).orElseThrow(ClothesNotFoundException::new);
+	}
+
 }
