@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum CartErrorCode implements ErrorCode {
-  CART_NOT_FOUND(404, "CA001", "장바구니에서 해당 상품을 찾을 수 있없습니다.");
+  CART_NOT_FOUND(404, "CA001", "장바구니에서 해당 상품을 찾을 수 없습니다.");
 
   private final int status;
   private final String code;
