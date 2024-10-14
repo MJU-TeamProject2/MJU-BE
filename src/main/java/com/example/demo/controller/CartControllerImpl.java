@@ -31,14 +31,14 @@ public class CartControllerImpl implements CartController {
   @GetMapping
   public ResponseEntity<SuccessResponse<List<GetCartResponse>>> getCartItems(@AuthInfo JwtInfo jwtInfo) {
     return SuccessResponse.of(
-        cartService.getCartItems(jwtInfo.customerId())).asHttp(HttpStatus.OK);
+        cartService.getCartItems(jwtInfo.memberId())).asHttp(HttpStatus.OK);
   }
 
   @Override
   @PostMapping
   public ResponseEntity<SuccessResponse<Void>> addToCartItem(@AuthInfo JwtInfo jwtInfo,
       @Valid @RequestBody AddToCartItemRequest addToCartItemRequest) {
-    cartService.addToCart(jwtInfo.customerId(), addToCartItemRequest);
+    cartService.addToCart(jwtInfo.memberId(), addToCartItemRequest);
     return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
   }
 
@@ -46,14 +46,14 @@ public class CartControllerImpl implements CartController {
   @PatchMapping
   public ResponseEntity<SuccessResponse<Void>> updateCartItem(@AuthInfo JwtInfo jwtInfo,
       @Valid @RequestBody UpdateCartItemRequest updateCartItemRequest) {
-    cartService.updateCartItem(jwtInfo.customerId(), updateCartItemRequest);
+    cartService.updateCartItem(jwtInfo.memberId(), updateCartItemRequest);
     return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
   }
 
   @Override
   @DeleteMapping("/{clothesId}")
   public ResponseEntity<SuccessResponse<Void>> deleteFromCart(@AuthInfo JwtInfo jwtInfo, @PathVariable Long clothesId) {
-    cartService.deleteFromCart(jwtInfo.customerId(), clothesId);
+    cartService.deleteFromCart(jwtInfo.memberId(), clothesId);
     return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
   }
 }
