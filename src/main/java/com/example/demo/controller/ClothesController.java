@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.clothes.dto.request.CreateClothesRequest;
+import com.example.demo.clothes.dto.request.UpdateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.ClothesCategory;
@@ -44,10 +45,10 @@ public interface ClothesController {
 			responseCode = "200",
 			description = "성공적으로 상품 수정 완료")
 	})
-	@PatchMapping(value = "/products/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ResponseEntity<SuccessResponse<Void>> updateProduct(
-		@AuthInfo JwtInfo jwtInfo, @Valid @ModelAttribute UpdateClothesRequest updateClothesRequest,
-		@PathVariable Long productId);
+	@PatchMapping(value = "/{clothesId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	ResponseEntity<SuccessResponse<Void>> updateClothes(
+		@AuthInfo JwtInfo jwtInfo, @ModelAttribute UpdateClothesRequest updateClothesRequest,
+		@PathVariable Long clothesId);
 
 	@Operation(summary = "상품 삭제", description = "상품 삭제를 위한 API")
 	@ApiResponses(value = {
@@ -55,9 +56,9 @@ public interface ClothesController {
 			responseCode = "200",
 			description = "성공적으로 상품 삭제 완료")
 	})
-	@DeleteMapping(value = "/products/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ResponseEntity<SuccessResponse<Void>> deleteProduct(
-		@AuthInfo JwtInfo jwtInfo, @PathVariable Long productId);
+	@DeleteMapping(value = "/{clothesId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	ResponseEntity<SuccessResponse<Void>> deleteClothes(
+		@AuthInfo JwtInfo jwtInfo, @PathVariable Long clothesId);
 
 	@Operation(summary = "의류 전체 조회", description = "Page에 맞게 의류 조회")
 	@ApiResponses(value = {
