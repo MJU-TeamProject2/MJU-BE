@@ -43,4 +43,8 @@ public class ClothesSize {
 		this.size = size;
 		this.quantity = quantity;
 	}
+
+	public void update(int quantity) {
+		this.quantity = quantity == 0 ? this.quantity : quantity;
+	}
 }

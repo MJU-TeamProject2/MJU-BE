@@ -1,5 +1,6 @@
 package com.example.demo.clothes.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class Clothes extends BaseEntity {
 	private List<ClothesSize> clothesSizeList;
 	// 의상 object path
 	private String objectKey;
+	private LocalDateTime deletedAt;
 
 	@Builder
 	public Clothes(Long id, ClothesCategory category, String imageUrl, String name, Integer price,
@@ -57,5 +59,23 @@ public class Clothes extends BaseEntity {
 		this.detailUrl = detailUrl;
 		this.clothesSizeList = new ArrayList<>();
 		this.objectKey = objectKey;
+		this.deletedAt = null;
+	}
+
+	public void update(ClothesCategory category, String imageUrl, String name, Integer price,
+		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl, String objectKey) {
+		this.category = category == null ? this.category : category;
+		this.imageUrl = imageUrl == null ? this.imageUrl : imageUrl;
+		this.name = name == null ? this.name : name;
+		this.price = price == null ? this.price : price;
+		this.genderCategory = genderCategory == null ? this.genderCategory : genderCategory;
+		this.productNumber = productNumber == null ? this.productNumber : productNumber;
+		this.discount = discount == null ? this.discount : discount;
+		this.detailUrl = detailUrl == null ? this.detailUrl : detailUrl;
+		this.objectKey = objectKey == null ? this.objectKey : objectKey;
+	}
+
+	public void delete(LocalDateTime time) {
+		this.deletedAt = time;
 	}
 }
