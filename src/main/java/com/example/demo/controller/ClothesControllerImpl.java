@@ -7,7 +7,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.clothes.dto.request.CreateClothesRequest;
+import com.example.demo.clothes.dto.request.UpdateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesObject;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
@@ -37,8 +41,26 @@ public class ClothesControllerImpl implements ClothesController {
 
 	@Override
 	@PostMapping(value = "/product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<SuccessResponse<Void>> createProduct(@AuthInfo JwtInfo jwtInfo, CreateClothesRequest createClothesRequest) {
+	public ResponseEntity<SuccessResponse<Void>> createProduct(@AuthInfo JwtInfo jwtInfo,
+		CreateClothesRequest createClothesRequest) {
 		clothesService.createProduct(createClothesRequest);
+		return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
+	}
+
+	@Override
+	@PatchMapping(value = "/{clothesId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<SuccessResponse<Void>> updateClothes(@AuthInfo JwtInfo jwtInfo,
+		@ModelAttribute UpdateClothesRequest updateClothesRequest,
+		@PathVariable Long clothesId) {
+		clothesService.updateProduct(clothesId, updateClothesRequest);
+		return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
+	}
+
+	@Override
+	@DeleteMapping(value = "/{clothesId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<SuccessResponse<Void>> deleteClothes(@AuthInfo JwtInfo jwtInfo,
+		@PathVariable Long clothesId) {
+		clothesService.deleteProduct(clothesId);
 		return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
 	}
 

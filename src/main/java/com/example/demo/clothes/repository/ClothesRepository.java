@@ -11,11 +11,11 @@ import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.entity.ClothesCategory;
 
 public interface ClothesRepository extends JpaRepository<Clothes, Long> {
-	Page<Clothes> findAll(Pageable pageable);
+	Page<Clothes> findAllByDeletedAtIsNull(Pageable pageable);
 
-	Optional<Clothes> findById(Long clothesId);
+	Optional<Clothes> findByIdAndDeletedAtIsNull(Long clothesId);
 
-	Optional<Clothes> findByProductNumber(String productNumber);
+	Optional<Clothes> findByProductNumberAndDeletedAtIsNull(String productNumber);
 
-	Page<Clothes> findByCategory(PageRequest pageRequest, ClothesCategory category);
+	Page<Clothes> findByCategoryAndDeletedAtIsNull(PageRequest pageRequest, ClothesCategory category);
 }
