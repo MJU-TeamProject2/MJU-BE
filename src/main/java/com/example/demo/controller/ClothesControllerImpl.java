@@ -57,7 +57,7 @@ public class ClothesControllerImpl implements ClothesController {
 	}
 
 	@Override
-	@DeleteMapping(value = "/{clothesId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@DeleteMapping(value = "/{clothesId}")
 	public ResponseEntity<SuccessResponse<Void>> deleteClothes(@AuthInfo JwtInfo jwtInfo,
 		@PathVariable Long clothesId) {
 		clothesService.deleteProduct(clothesId);

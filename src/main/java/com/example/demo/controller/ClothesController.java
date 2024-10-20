@@ -56,7 +56,7 @@ public interface ClothesController {
 			responseCode = "200",
 			description = "성공적으로 상품 삭제 완료")
 	})
-	@DeleteMapping(value = "/{clothesId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@DeleteMapping(value = "/{clothesId}")
 	ResponseEntity<SuccessResponse<Void>> deleteClothes(
 		@AuthInfo JwtInfo jwtInfo, @PathVariable Long clothesId);
 
