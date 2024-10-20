@@ -38,16 +38,20 @@ public class ClothesService {
 
 	public PageResponse<GetClothesResponse> getAllClothes(PageRequest pageRequest) {
 		return PageUtils.toPageResponse(clothesRepository.findAllByDeletedAtIsNull(pageRequest))
-			.map(GetClothesResponse::from);
+			.map(clothes -> {
+				String imageUrl = s3Service.generatePresignedUrl(clothes.getImageUrl());
+				return GetClothesResponse.of(clothes, imageUrl);
+			});
 	}
 
 	public GetClothesDetailResponse getClothesDetail(Long clothesId) {
 		Clothes clothes = clothesRepository.findByIdAndDeletedAtIsNull(clothesId)
 			.orElseThrow(ClothesNotFoundException::new);
-		String objectKey = clothes.getObjectKey();
 
-		String url = s3Service.generatePresignedUrl(objectKey);
-		return GetClothesDetailResponse.from(clothes, url);
+		String imageUrl = s3Service.generatePresignedUrl(clothes.getImageUrl());
+		String detailUrl = s3Service.generatePresignedUrl(clothes.getDetailUrl());
+		String objectUrl = s3Service.generatePresignedUrl(clothes.getObjectKey());
+		return GetClothesDetailResponse.of(clothes, imageUrl, detailUrl, objectUrl);
 	}
 
 	public void createProduct(CreateClothesRequest createClothesRequest) {
@@ -154,7 +158,10 @@ public class ClothesService {
 		ClothesCategory clothesCategory) {
 		return PageUtils.toPageResponse(
 				clothesRepository.findByCategoryAndDeletedAtIsNull(pageRequest, clothesCategory))
-			.map(GetClothesResponse::from);
+			.map(clothes -> {
+				String imageUrl = s3Service.generatePresignedUrl(clothes.getImageUrl());
+				return GetClothesResponse.of(clothes, imageUrl);
+			});
 	}
 
 	public Clothes findById(Long clothesId) {
