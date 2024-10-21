@@ -1,5 +1,7 @@
 package com.example.demo.cart.dto.request;
 
+import com.example.demo.clothes.entity.Size;
+import com.example.demo.clothes.util.SizeValidation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -17,5 +19,10 @@ public record AddToCartItemRequest(
     @Min(value = 0, message = "수량은 0 이상이어야 합니다.")
     @Max(value = 99, message = "수량은 99 이하이어야 합니다.")
     @NotNull(message = "수량은 비어있을 수 없습니다.")
-    Integer quantity
+    Integer quantity,
+
+    @Schema(description = "상품 사이즈", requiredMode = Schema.RequiredMode.REQUIRED,
+        example = "S, M, L, XL, XXL", implementation = Size.class)
+    @SizeValidation.ValidSize
+    Size size
 ) {}
