@@ -1,7 +1,6 @@
 package com.example.demo.cart.service;
 
 import com.example.demo.cart.entity.Cart;
-import com.example.demo.cart.exception.AlreadyExsistsCartException;
 import com.example.demo.cart.repository.CartRepository;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.entity.ClothesSize;
