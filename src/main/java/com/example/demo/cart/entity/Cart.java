@@ -1,5 +1,6 @@
 package com.example.demo.cart.entity;
 
+import com.example.demo.clothes.entity.ClothesSize;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.common.util.BaseEntity;
@@ -31,10 +32,18 @@ public class Cart extends BaseEntity {
   @JoinColumn(name = "clothes_id")
   private Clothes clothes;
 
+  @ManyToOne
+  @JoinColumn(name = "clothes_size_id")
+  private ClothesSize clothesSize;
+
   @Builder.Default
   private Integer quantity = 1;
 
   public void updateQuantity(Integer newQuantity) {
     this.quantity = newQuantity;
+  }
+
+  public void updateClothesSize(ClothesSize clothesSize) {
+    this.clothesSize = clothesSize;
   }
 }
