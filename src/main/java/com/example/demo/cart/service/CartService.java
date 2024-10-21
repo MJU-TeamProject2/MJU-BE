@@ -30,18 +30,12 @@ public class CartService {
         );
   }
 
-  public void updateCartItem(Cart cart, int quantity, ClothesSize clothesSize) {
-    cartRepository.findByCustomerAndClothesAndClothesSize(cart.getCustomer(), cart.getClothes(), cart.getClothesSize())
-        .ifPresentOrElse(
-          item -> {
-            throw new AlreadyExsistsCartException();
-          },
-          () -> {
-            cart.updateClothesSize(clothesSize);
-            cart.updateQuantity(quantity);
-            cartRepository.save(cart);
-          }
-        );
+  public void updateCartItem(Cart cart, int quantity) {
+    if (quantity > cart.getClothesSize().getQuantity()) {
+      throw new ClothesInsufficientStockException();
+    }
+    cart.updateQuantity(quantity);
+    cartRepository.save(cart);
   }
 
 

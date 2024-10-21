@@ -19,10 +19,5 @@ public record UpdateCartItemRequest(
     @Min(value = 0, message = "수량은 0 이상이어야 합니다.")
     @Max(value = 99, message = "수량은 99 이하이어야 합니다.")
     @NotNull(message = "수량은 비어있을 수 없습니다.")
-    Integer quantity,
-
-    @Schema(description = "상품 사이즈", requiredMode = Schema.RequiredMode.REQUIRED,
-        example = "S, M, L, XL, XXL", implementation = Size.class)
-    @SizeValidation.ValidSize
-    Size size
+    Integer quantity
 ) {}

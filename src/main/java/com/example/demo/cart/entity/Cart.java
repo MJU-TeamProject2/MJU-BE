@@ -42,8 +42,4 @@ public class Cart extends BaseEntity {
   public void updateQuantity(Integer newQuantity) {
     this.quantity = newQuantity;
   }
-
-  public void updateClothesSize(ClothesSize clothesSize) {
-    this.clothesSize = clothesSize;
-  }
 }

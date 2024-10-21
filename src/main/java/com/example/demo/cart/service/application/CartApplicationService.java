@@ -43,8 +43,7 @@ public class CartApplicationService {
   @Transactional
   public void updateCartItem(Long customerId, UpdateCartItemRequest request) {
     Cart cart = cartService.findByIdAndCustomerId(request.cartId(), customerId);
-    ClothesSize clothesSize = clothesSizeService.findByClothesIdAndSize(cart.getClothes(), request.size());
-    cartService.updateCartItem(cart, request.quantity(), clothesSize);
+    cartService.updateCartItem(cart, request.quantity());
   }
 
   @Transactional
