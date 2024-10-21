@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.demo.common.security.exception.SecurityErrorCode;
 import com.example.demo.common.security.exception.TokenException;
 import com.example.demo.common.security.exception.TokenExpiredException;
-import com.example.demo.common.util.Role;
+import com.example.demo.common.util.auth.Role;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -66,7 +66,8 @@ public class TokenFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
-		return !isRequestMatch(accessPath.getCustomerAllowdPath(), request);
+		return !isRequestMatch(accessPath.getCustomerAllowedPath(), request) && !isRequestMatch(
+			accessPath.getAdminAllowedPath(), request);
 	}
 
 	private boolean isRequestMatch(MultiValueMap<String, HttpMethod> ignoredPaths, HttpServletRequest request) {
@@ -89,7 +90,10 @@ public class TokenFilter extends OncePerRequestFilter {
 			.map(Role::valueOf)
 			.anyMatch(authority -> {
 				if (authority.equals(Role.CUSTOMER)) {
-					return isRequestMatch(accessPath.getCustomerAllowdPath(), request);
+					return isRequestMatch(accessPath.getCustomerAllowedPath(), request);
+				}
+				else if(authority.equals(Role.ADMIN)) {
+					return isRequestMatch(accessPath.getAdminAllowedPath(), request);
 				}
 				return false;
 			});
