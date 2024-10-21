@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.cart.controller;
 
 import com.example.demo.cart.dto.request.AddToCartItemRequest;
 import com.example.demo.cart.dto.request.UpdateCartItemRequest;
@@ -56,6 +56,6 @@ public interface CartController {
           responseCode = "200",
           description = "장바구니 상품이 성공적으로 삭제 완료")
   })
-  @DeleteMapping("/{clothesId}")
-  ResponseEntity<SuccessResponse<Void>> deleteFromCart(@AuthInfo JwtInfo jwtInfo, @PathVariable Long clothesId);
+  @DeleteMapping("/{cartId}")
+  ResponseEntity<SuccessResponse<Void>> deleteFromCart(@AuthInfo JwtInfo jwtInfo, @PathVariable Long cartId);
 }
