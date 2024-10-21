@@ -23,7 +23,7 @@ public record GetCartResponse(
     return carts.stream()
         .map(cart -> GetCartResponse.builder()
                 .cartId(cart.getId())
-                .clothesId(cart.getId())
+                .clothesId(cart.getClothes().getId())
                 .imageUrl(cart.getClothes().getImageUrl())
                 .detailUrl(cart.getClothes().getDetailUrl())
                 .name(cart.getClothes().getName())
