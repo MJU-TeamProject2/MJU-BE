@@ -37,8 +37,8 @@ public class CartService {
     Clothes clothes = clothesService.findById(addToCartItemRequest.clothesId());
     cartRepository.findByCustomerAndClothes(customer, clothes)
         .ifPresentOrElse(
-            this::incrementQuantity,
-            () -> addToNewCart(customer, clothes)
+            cart -> updateCartQuantity(cart, addToCartItemRequest.quantity()),
+            () -> addToNewCart(customer, clothes, addToCartItemRequest.quantity())
         );
   }
 
@@ -64,16 +64,18 @@ public class CartService {
         .orElseThrow(CartNotFoundException::new);
   }
 
-  public void incrementQuantity(Cart cart) {
-    cart.updateQuantity(cart.getQuantity() + 1);
+  private void updateCartQuantity(Cart cart, int requestedQuantity) {
+    int newQuantity = cart.getQuantity() + requestedQuantity;
+    cart.updateQuantity(newQuantity);
     cartRepository.save(cart);
   }
 
-  public void addToNewCart(Customer customer, Clothes clothes) {
+  private void addToNewCart(Customer customer, Clothes clothes, int quantity) {
     cartRepository.save(
         Cart.builder()
             .customer(customer)
             .clothes(clothes)
+            .quantity(quantity)
             .build()
     );
   }
