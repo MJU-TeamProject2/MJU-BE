@@ -16,4 +16,10 @@ public class ClothesSizeService {
   public ClothesSize findByClothesIdAndSize(Clothes clothes, Size size) {
     return clothesSizeRepository.findByClothesAndSize(clothes, size).orElseThrow(ClothesSizeNotFoundException::new);
   }
+
+  public void updateClothesQuantity(ClothesSize clothesSize, Integer quantity) {
+    clothesSize.isQuantityAvailable(quantity);
+    clothesSize.update(clothesSize.getQuantity() - quantity);
+    clothesSizeRepository.save(clothesSize);
+  }
 }
