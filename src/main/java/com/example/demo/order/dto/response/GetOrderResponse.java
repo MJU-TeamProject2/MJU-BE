@@ -23,7 +23,7 @@ public record GetOrderResponse(
     OrderStatus orderStatus,
     LocalDateTime createdAt
 ) {
-  public List<GetOrderResponse> listOf(List<Order> orders) {
+  public static List<GetOrderResponse> listOf(List<Order> orders) {
     return orders.stream()
         .map(order -> GetOrderResponse.builder()
                 .orderId(order.getId())
