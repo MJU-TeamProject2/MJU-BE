@@ -1,5 +1,10 @@
 package com.example.demo.customer.entity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.example.demo.common.util.BaseEntity;
@@ -38,6 +43,10 @@ public class Customer extends BaseEntity {
 	@Column(name = "phone_number")
 	private String phoneNumber;
 	private boolean deleted;
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<Address> address = new ArrayList<>();
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<Payment> payments = new ArrayList<>();
 
 	@Builder
 	public Customer(String name, String nickName, int age, Gender gender, String email, String password, String phoneNumber) {
