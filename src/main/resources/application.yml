@@ -1,4 +1,8 @@
 spring:
+  http:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
