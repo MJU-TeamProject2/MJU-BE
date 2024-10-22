@@ -3,6 +3,7 @@ package com.example.demo.order.service.application;
 import com.example.demo.cart.entity.Cart;
 import com.example.demo.cart.service.CartService;
 import com.example.demo.clothes.entity.Clothes;
+import com.example.demo.clothes.service.ClothesSizeService;
 import com.example.demo.common.util.S3Service;
 import com.example.demo.customer.entity.Address;
 import com.example.demo.customer.entity.Customer;
@@ -32,6 +33,7 @@ public class OrderApplicationService {
   private final CartService cartService;
   private final AddressService addressService;
   private final PaymentService paymentService;
+  private final ClothesSizeService clothesSizeService;
   private final S3Service s3Service;
 
   @Transactional(readOnly = true)
@@ -68,6 +70,7 @@ public class OrderApplicationService {
     Payment payment = paymentService.findOneByIdAndCustomer(addToOrderItemRequest.paymentId(), customer);
 
     orderService.addToOrderItem(customer, cart, address, payment);
+    clothesSizeService.updateClothesQuantity(cart.getClothesSize(), cart.getClothesSize().getQuantity() - cart.getQuantity());
     cartService.deleteFromCart(cart);
   }
 
@@ -85,5 +88,6 @@ public class OrderApplicationService {
     Customer customer = customerService.findById(customerId);
     Order order = orderService.findOneByIdAndCustomer(orderId, customer);
     orderService.deleteFromOrder(order);
+    clothesSizeService.updateClothesQuantity(order.getClothesSize(), order.getClothesSize().getQuantity() + order.getQuantity());
   }
 }
