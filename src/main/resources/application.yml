@@ -20,7 +20,6 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
-  packages-to-scan: com.example.demo.controller
 
 logging:
   level:
