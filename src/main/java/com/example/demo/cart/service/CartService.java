@@ -1,80 +1,70 @@
 package com.example.demo.cart.service;
 
-import com.example.demo.cart.dto.request.AddToCartItemRequest;
-import com.example.demo.cart.dto.request.UpdateCartItemRequest;
-import com.example.demo.cart.dto.response.GetCartResponse;
 import com.example.demo.cart.entity.Cart;
 import com.example.demo.cart.repository.CartRepository;
 import com.example.demo.clothes.entity.Clothes;
-import com.example.demo.clothes.service.ClothesService;
+import com.example.demo.clothes.entity.ClothesSize;
 import com.example.demo.customer.entity.Customer;
-
-import com.example.demo.customer.service.CustomerService;
-import com.example.demo.exception.CartNotFoundException;
-import java.util.List;
+import com.example.demo.cart.exception.CartNotFoundException;
+import com.example.demo.exception.ClothesInsufficientStockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CartService {
   private final CartRepository cartRepository;
-  private final CustomerService customerService;
-  private final ClothesService clothesService;
 
-  @Transactional(readOnly = true)
-  public List<GetCartResponse> getCartItems(Long customerId) {
-    Customer customer = customerService.findById(customerId);
-    List<Cart> carts = cartRepository.findByCustomer(customer);
-
-    return GetCartResponse.listOf(carts);
+  public List<Cart> findByCustomer(Customer customer) {
+    return cartRepository.findByCustomer(customer);
   }
 
-  @Transactional
-  public void addToCart(Long customerId, AddToCartItemRequest addToCartItemRequest) {
-    Customer customer = customerService.findById(customerId);
-    Clothes clothes = clothesService.findById(addToCartItemRequest.clothesId());
-    cartRepository.findByCustomerAndClothes(customer, clothes)
+  public void addToCart(Customer customer, Clothes clothes, int quantity, ClothesSize clothesSize) {
+    cartRepository.findByCustomerAndClothesAndClothesSize(customer, clothes, clothesSize)
         .ifPresentOrElse(
-            this::incrementQuantity,
-            () -> addToNewCart(customer, clothes)
+            cart -> updateCartQuantity(cart, quantity),
+            () -> addToNewCart(customer, clothes, quantity, clothesSize)
         );
   }
 
-  @Transactional
-  public void updateCartItem(Long customerId, UpdateCartItemRequest updateCartItemRequest) {
-    Customer customer = customerService.findById(customerId);
-    Clothes clothes = clothesService.findById(updateCartItemRequest.clothesId());
-    Cart cart = findByCustomerAndClothes(customer, clothes);
-    cart.updateQuantity(updateCartItemRequest.quantity());
+  public void updateCartItem(Cart cart, int quantity) {
+    if (quantity > cart.getClothesSize().getQuantity()) {
+      throw new ClothesInsufficientStockException();
+    }
+    cart.updateQuantity(quantity);
     cartRepository.save(cart);
   }
 
-  @Transactional
-  public void deleteFromCart(Long customerId, Long clothesId) {
-    Customer customer = customerService.findById(customerId);
-    Clothes clothes = clothesService.findById(clothesId);
-    Cart cart = findByCustomerAndClothes(customer, clothes);
+
+  public void deleteFromCart(Cart cart) {
     cartRepository.delete(cart);
   }
 
-  public Cart findByCustomerAndClothes(Customer customer, Clothes clothes) {
-    return cartRepository.findByCustomerAndClothes(customer, clothes)
-        .orElseThrow(CartNotFoundException::new);
-  }
-
-  public void incrementQuantity(Cart cart) {
-    cart.updateQuantity(cart.getQuantity() + 1);
+  private void updateCartQuantity(Cart cart, int requestedQuantity) {
+    int newQuantity = cart.getQuantity() + requestedQuantity;
+    cart.updateQuantity(newQuantity);
+    cart.getClothesSize().isQuantityAvailable(newQuantity);
     cartRepository.save(cart);
   }
 
-  public void addToNewCart(Customer customer, Clothes clothes) {
+  private void addToNewCart(Customer customer, Clothes clothes, int quantity, ClothesSize clothesSize) {
+    if (quantity > clothesSize.getQuantity()) {
+      throw new ClothesInsufficientStockException();
+    }
     cartRepository.save(
         Cart.builder()
             .customer(customer)
             .clothes(clothes)
+            .quantity(quantity)
+            .clothesSize(clothesSize)
             .build()
     );
+  }
+
+  public Cart findByIdAndCustomerId(Long cartId, Long customerId) {
+    return cartRepository.findByIdAndCustomerId(cartId, customerId)
+        .orElseThrow(CartNotFoundException::new);
   }
 }

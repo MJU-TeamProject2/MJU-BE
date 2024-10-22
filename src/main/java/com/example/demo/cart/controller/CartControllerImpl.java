@@ -1,9 +1,9 @@
-package com.example.demo.controller;
+package com.example.demo.cart.controller;
 
 import com.example.demo.cart.dto.request.AddToCartItemRequest;
 import com.example.demo.cart.dto.request.UpdateCartItemRequest;
 import com.example.demo.cart.dto.response.GetCartResponse;
-import com.example.demo.cart.service.CartService;
+import com.example.demo.cart.service.application.CartApplicationService;
 import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.common.security.AuthInfo;
 import com.example.demo.common.security.JwtInfo;
@@ -26,19 +26,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CartControllerImpl implements CartController {
 
-  private final CartService cartService;
+  private final CartApplicationService cartApplicationService;
   @Override
   @GetMapping
   public ResponseEntity<SuccessResponse<List<GetCartResponse>>> getCartItems(@AuthInfo JwtInfo jwtInfo) {
     return SuccessResponse.of(
-        cartService.getCartItems(jwtInfo.memberId())).asHttp(HttpStatus.OK);
+        cartApplicationService.getCartItems(jwtInfo.memberId())).asHttp(HttpStatus.OK);
   }
 
   @Override
   @PostMapping
   public ResponseEntity<SuccessResponse<Void>> addToCartItem(@AuthInfo JwtInfo jwtInfo,
       @Valid @RequestBody AddToCartItemRequest addToCartItemRequest) {
-    cartService.addToCart(jwtInfo.memberId(), addToCartItemRequest);
+    cartApplicationService.addToCart(jwtInfo.memberId(), addToCartItemRequest);
     return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
   }
 
@@ -46,14 +46,14 @@ public class CartControllerImpl implements CartController {
   @PatchMapping
   public ResponseEntity<SuccessResponse<Void>> updateCartItem(@AuthInfo JwtInfo jwtInfo,
       @Valid @RequestBody UpdateCartItemRequest updateCartItemRequest) {
-    cartService.updateCartItem(jwtInfo.memberId(), updateCartItemRequest);
+    cartApplicationService.updateCartItem(jwtInfo.memberId(), updateCartItemRequest);
     return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
   }
 
   @Override
-  @DeleteMapping("/{clothesId}")
-  public ResponseEntity<SuccessResponse<Void>> deleteFromCart(@AuthInfo JwtInfo jwtInfo, @PathVariable Long clothesId) {
-    cartService.deleteFromCart(jwtInfo.memberId(), clothesId);
+  @DeleteMapping("/{cartId}")
+  public ResponseEntity<SuccessResponse<Void>> deleteFromCart(@AuthInfo JwtInfo jwtInfo, @PathVariable Long cartId) {
+    cartApplicationService.deleteFromCart(jwtInfo.memberId(), cartId);
     return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
   }
 }

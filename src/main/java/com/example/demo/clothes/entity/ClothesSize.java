@@ -1,5 +1,6 @@
 package com.example.demo.clothes.entity;
 
+import com.example.demo.exception.ClothesInsufficientStockException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,5 +47,11 @@ public class ClothesSize {
 
 	public void update(int quantity) {
 		this.quantity = quantity == 0 ? this.quantity : quantity;
+	}
+
+	public void isQuantityAvailable(int quantity) {
+		if (this.quantity < quantity) {
+			throw new ClothesInsufficientStockException();
+		}
 	}
 }
