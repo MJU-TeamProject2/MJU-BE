@@ -6,6 +6,7 @@ import com.example.demo.common.util.BaseEntity;
 import com.example.demo.customer.entity.Address;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.entity.Payment;
+import com.example.demo.order.exception.OrderStatusNotValidException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "orders")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -60,4 +63,12 @@ public class Order extends BaseEntity {
   private OrderStatus status;
 
   private LocalDateTime deletedAt;
+
+  public void updateAddress(Address address) {
+    if (this.status == OrderStatus.PENDING) {
+      this.address = address;
+    } else {
+      throw new OrderStatusNotValidException();
+    }
+  }
 }
