@@ -17,10 +17,12 @@ import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 
 @Entity
 @Getter
+@Setter
 @FieldNameConstants
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Clothes extends BaseEntity {
