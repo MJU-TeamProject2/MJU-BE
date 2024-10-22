@@ -40,7 +40,7 @@ public class OrderControllerImpl implements OrderController {
   @Override
   @GetMapping("/{orderId}")
   public ResponseEntity<SuccessResponse<GetOrderDetailResponse>> getOrderItemDetail(@AuthInfo JwtInfo jwtInfo,
-      Long orderId) {
+      @PathVariable Long orderId) {
     return SuccessResponse.of(
         orderApplicationService.getOrderItemDetail(jwtInfo.memberId(), orderId)).asHttp(HttpStatus.OK);
   }
