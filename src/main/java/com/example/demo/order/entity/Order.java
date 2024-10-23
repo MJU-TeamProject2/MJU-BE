@@ -65,7 +65,7 @@ public class Order extends BaseEntity {
   private LocalDateTime deletedAt;
 
   public void updateAddress(Address address) {
-    if (this.status == OrderStatus.PENDING) {
+    if (this.status == OrderStatus.PREPARING) {
       this.address = address;
     } else {
       throw new OrderStatusNotValidException();
