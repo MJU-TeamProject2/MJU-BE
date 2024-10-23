@@ -10,6 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,4 +46,10 @@ public class Payment extends BaseEntity {
   private String expiryDate;
 
   private LocalDateTime deletedAt;
+
+  public void update(String cardNumber, CardProvider cardProvider, String expiryDate) {
+    this.cardNumber = cardNumber;
+    this.cardProvider = cardProvider;
+    this.expiryDate = expiryDate;
+  }
 }
