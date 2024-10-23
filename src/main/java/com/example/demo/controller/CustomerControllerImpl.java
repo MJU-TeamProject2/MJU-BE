@@ -98,7 +98,7 @@ public class CustomerControllerImpl implements CustomerController {
 	public ResponseEntity<SuccessResponse<GetAddressDetailResponse>> getAddressDetail(@AuthInfo JwtInfo jwtInfo,
 			@PathVariable Long addressId) {
 		return SuccessResponse.of(
-				customerService.getAddressDetail(jwtInfo.memberId())
+				customerService.getAddressDetail(jwtInfo.memberId(), addressId)
 		).asHttp(HttpStatus.OK);
 	}
 
