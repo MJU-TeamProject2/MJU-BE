@@ -14,7 +14,7 @@ public record GetAddressResponse(
     String recipient,
     String baseAddress
 ) {
-  static public List<GetAddressResponse> listOf(List<Address> addresses) {
+  public static List<GetAddressResponse> listOf(List<Address> addresses) {
     return addresses.stream()
         .map(address -> GetAddressResponse.builder()
             .addressId(address.getId())

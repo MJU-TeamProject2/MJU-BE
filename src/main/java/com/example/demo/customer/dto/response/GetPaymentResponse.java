@@ -14,7 +14,7 @@ public record GetPaymentResponse(
     String cardNumber,
     CardProvider cardProvider
 ) {
-  static public List<GetPaymentResponse> listOf(List<Payment> payments) {
+  public static List<GetPaymentResponse> listOf(List<Payment> payments) {
     return payments.stream()
         .map(payment -> GetPaymentResponse.builder()
             .paymentId(payment.getId())
