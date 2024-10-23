@@ -7,6 +7,8 @@ import com.example.demo.exception.CustomerAddressNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AddressService {
@@ -16,5 +18,9 @@ public class AddressService {
   public Address findOneByIdAndCustomer(Long addressId, Customer customer) {
     return addressRepository.findOneByIdAndCustomer(addressId, customer)
         .orElseThrow(CustomerAddressNotFoundException::new);
+  }
+
+  public List<Address> findByCustomerAndDeletedAtIsNull(Customer customer) {
+    return addressRepository.findByCustomerAndDeletedAtIsNull(customer);
   }
 }
