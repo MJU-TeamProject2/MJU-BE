@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,4 +41,6 @@ public class Payment extends BaseEntity {
 
   @Column(name = "expiry_date")
   private String expiryDate;
+
+  private LocalDateTime deletedAt;
 }

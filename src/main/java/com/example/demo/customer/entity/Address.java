@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,5 @@ public class Address extends BaseEntity {
   @Column(name = "detail_address")
   private String detailAddress;
 
-  @Column(name = "is_default")
-  private boolean isDefault;
+  private LocalDateTime deletedAt;
 }
