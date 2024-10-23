@@ -43,4 +43,12 @@ public class Address extends BaseEntity {
   private String detailAddress;
 
   private LocalDateTime deletedAt;
+
+  public void update(String name, String recipient, String zipCode, String baseAddress, String detailAddress) {
+    this.name = name;
+    this.recipient = recipient;
+    this.zipCode = zipCode;
+    this.baseAddress = baseAddress;
+    this.detailAddress = detailAddress;
+  }
 }
