@@ -41,13 +41,14 @@ public class Clothes extends BaseEntity {
 	private String detailUrl;
 	@OneToMany(mappedBy = "clothes")
 	private List<ClothesSize> clothesSizeList;
-	// 의상 object path
 	private String objectKey;
+	private String mtlKey;
 	private LocalDateTime deletedAt;
 
 	@Builder
 	public Clothes(Long id, ClothesCategory category, String imageUrl, String name, Integer price,
-		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl, String objectKey) {
+		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl, String objectKey,
+		String mtlKey) {
 		this.id = id;
 		this.category = category;
 		this.imageUrl = imageUrl;
@@ -59,11 +60,13 @@ public class Clothes extends BaseEntity {
 		this.detailUrl = detailUrl;
 		this.clothesSizeList = new ArrayList<>();
 		this.objectKey = objectKey;
+		this.mtlKey = mtlKey;
 		this.deletedAt = null;
 	}
 
 	public void update(ClothesCategory category, String imageUrl, String name, Integer price,
-		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl, String objectKey) {
+		GenderCategory genderCategory, String productNumber, Integer discount, String detailUrl, String objectKey,
+		String mtlKey) {
 		this.category = category == null ? this.category : category;
 		this.imageUrl = imageUrl == null ? this.imageUrl : imageUrl;
 		this.name = name == null ? this.name : name;
@@ -73,6 +76,7 @@ public class Clothes extends BaseEntity {
 		this.discount = discount == null ? this.discount : discount;
 		this.detailUrl = detailUrl == null ? this.detailUrl : detailUrl;
 		this.objectKey = objectKey == null ? this.objectKey : objectKey;
+		this.mtlKey = mtlKey == null ? this.mtlKey : mtlKey;
 	}
 
 	public void delete(LocalDateTime time) {
