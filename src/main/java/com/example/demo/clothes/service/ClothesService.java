@@ -51,9 +51,11 @@ public class ClothesService {
 		String imageUrl = s3Service.generatePresignedUrl(clothes.getImageUrl());
 		String detailUrl = s3Service.generatePresignedUrl(clothes.getDetailUrl());
 		String objectUrl = s3Service.generatePresignedUrl(clothes.getObjectKey());
-		return GetClothesDetailResponse.of(clothes, imageUrl, detailUrl, objectUrl);
+		String mtlUrl = s3Service.generatePresignedUrl(clothes.getMtlKey());
+		return GetClothesDetailResponse.of(clothes, imageUrl, detailUrl, objectUrl, mtlUrl);
 	}
 
+	@Transactional
 	public void createProduct(CreateClothesRequest createClothesRequest) {
 		checkProductDuplicate(createClothesRequest.productNumber());
 
@@ -62,6 +64,7 @@ public class ClothesService {
 		String detailUrl = s3Service.uploadFile(createClothesRequest.detailImage(),
 			createClothesRequest.category().toString());
 		String objectKey = s3Service.uploadFile(createClothesRequest.objectFile(), "object");
+		String mtlKey = s3Service.uploadFile(createClothesRequest.mtlFile(), "mtl");
 
 		Clothes clothe = Clothes.builder()
 			.category(createClothesRequest.category())
@@ -73,6 +76,7 @@ public class ClothesService {
 			.discount(createClothesRequest.discount())
 			.detailUrl(detailUrl)
 			.objectKey(objectKey)
+			.mtlKey(mtlKey)
 			.build();
 
 		ClothesSize clothesSize = ClothesSize.builder()
@@ -83,6 +87,7 @@ public class ClothesService {
 
 		clothe.getClothesSizeList().add(clothesSize);
 		clothesRepository.save(clothe);
+		clothesSizeRepository.save(clothesSize);
 	}
 
 	@Transactional
@@ -92,6 +97,7 @@ public class ClothesService {
 		String mainUrl = null;
 		String detailUrl = null;
 		String objectKey = null;
+		String mtlKey = null;
 		String category = updateClothesRequest.category() == null ? clothes.getCategory().toString() :
 			updateClothesRequest.category().toString();
 
@@ -106,6 +112,9 @@ public class ClothesService {
 		if (updateClothesRequest.objectFile() != null) {
 			objectKey = s3Service.uploadFile(updateClothesRequest.objectFile(), "object");
 		}
+		if (updateClothesRequest.objectFile() != null) {
+			mtlKey = s3Service.uploadFile(updateClothesRequest.mtlFile(), "mtl");
+		}
 
 		clothes.update(updateClothesRequest.category(),
 			mainUrl,
@@ -115,7 +124,8 @@ public class ClothesService {
 			updateClothesRequest.productNumber(),
 			updateClothesRequest.discount(),
 			detailUrl,
-			objectKey);
+			objectKey,
+			mtlKey);
 
 		if (updateClothesRequest.size() == null)
 			return;

@@ -52,5 +52,7 @@ public record UpdateClothesRequest(
 	@Schema(description = "상품 상세설명 이미지", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 	MultipartFile detailImage,
 	@Schema(description = "상품 3D Object", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-	MultipartFile objectFile) {
+	MultipartFile objectFile,
+	@Schema(description = "상품 mtl file", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+	MultipartFile mtlFile) {
 }
