@@ -32,9 +32,12 @@ public record GetClothesDetailResponse(@Schema(description = "의류 id")
 									   @Schema(description = "의류 사이즈 및 사이즈별 수량 리스트")
 									   List<GetClothesSizeResponse> clothesSizeList,
 									   @Schema(description = "의류 Object 파일")
-									   String objectUrl) {
+									   String objectUrl,
+									   @Schema(description = "의류 mtl 파일")
+									   String mtlUrl) {
 
-	public static GetClothesDetailResponse of(Clothes clothes, String imageUrl, String detailUrl, String objectUrl) {
+	public static GetClothesDetailResponse of(Clothes clothes, String imageUrl, String detailUrl, String objectUrl,
+		String mtlUrl) {
 		return GetClothesDetailResponse.builder()
 			.clothesId(clothes.getId())
 			.category(clothes.getCategory())
@@ -47,6 +50,7 @@ public record GetClothesDetailResponse(@Schema(description = "의류 id")
 			.detailUrl(detailUrl)
 			.clothesSizeList(clothes.getClothesSizeList().stream().map(GetClothesSizeResponse::from).toList())
 			.objectUrl(objectUrl)
+			.mtlUrl(mtlUrl)
 			.build();
 	}
 }
