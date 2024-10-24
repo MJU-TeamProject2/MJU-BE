@@ -1,5 +1,15 @@
 package com.example.demo.customer.service;
 
+import com.example.demo.customer.dto.request.AddAddressRequest;
+import com.example.demo.customer.dto.request.AddPaymentRequest;
+import com.example.demo.customer.dto.request.UpdateAddressRequest;
+import com.example.demo.customer.dto.request.UpdatePaymentRequest;
+import com.example.demo.customer.dto.response.GetAddressDetailResponse;
+import com.example.demo.customer.dto.response.GetAddressResponse;
+import com.example.demo.customer.dto.response.GetPaymentDetailResponse;
+import com.example.demo.customer.dto.response.GetPaymentResponse;
+import com.example.demo.customer.entity.Address;
+import com.example.demo.customer.entity.Payment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +28,7 @@ import com.example.demo.exception.CustomerErrorCode;
 import com.example.demo.exception.CustomerNotFoundException;
 
 import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +37,8 @@ public class CustomerService {
 	private final PasswordEncoder passwordEncoder;
 	private final TokenProvider tokenProvider;
 	private final AuthService authService;
+	private final AddressService addressService;
+	private final PaymentService paymentService;
 
 	public void register(Customer customer) {
 		Customer newCustomer = customerRepository.save(customer);
@@ -75,5 +88,75 @@ public class CustomerService {
 
 	public Customer findById(Long customerId) {
 		return customerRepository.findById(customerId).orElseThrow(CustomerNotFoundException::new);
+	}
+
+	@Transactional(readOnly = true)
+	public List<GetAddressResponse> getAddresses(Long customerId) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		List<Address> addresses = addressService.findByCustomerAndDeletedAtIsNull(customer);
+		return GetAddressResponse.listOf(addresses);
+	}
+
+	@Transactional(readOnly = true)
+	public GetAddressDetailResponse getAddressDetail(Long customerId, Long addressId) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		return GetAddressDetailResponse.from(
+				addressService.findByIdAndCustomerAndDeletedAtIsNull(addressId, customer)
+		);
+	}
+
+	@Transactional
+	public void addAddress(Long customerId, AddAddressRequest addAddressRequest) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		addressService.addAddress(customer, addAddressRequest);
+	}
+
+	@Transactional
+	public void updateAddress(Long customerId, UpdateAddressRequest updateAddressRequest) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		Address address = addressService.findByIdAndCustomerAndDeletedAtIsNull(updateAddressRequest.addressId(), customer);
+		addressService.updateAddress(address, updateAddressRequest);
+	}
+
+	@Transactional
+	public void deleteAddress(Long customerId, Long addressId) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		Address address = addressService.findByIdAndCustomerAndDeletedAtIsNull(addressId, customer);
+		addressService.deleteAddress(address);
+	}
+
+	@Transactional(readOnly = true)
+	public List<GetPaymentResponse> getPayments(Long customerId) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		List<Payment> payments = paymentService.findByCustomerAndDeletedAtIsNull(customer);
+		return GetPaymentResponse.listOf(payments);
+	}
+
+	@Transactional(readOnly = true)
+	public GetPaymentDetailResponse getPaymentDetail(Long customerId, Long paymentId) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		return GetPaymentDetailResponse.from(
+				paymentService.findByIdAndCustomerAndDeletedAtIsNull(paymentId, customer)
+		);
+	}
+
+	@Transactional
+	public void addPayment(Long customerId, AddPaymentRequest addPaymentRequest) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		paymentService.addPayment(customer, addPaymentRequest);
+	}
+
+	@Transactional
+	public void updatePayment(Long customerId, UpdatePaymentRequest updatePaymentRequest) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		Payment payment = paymentService.findByIdAndCustomerAndDeletedAtIsNull(updatePaymentRequest.paymentId(), customer);
+		paymentService.updatePayment(payment, updatePaymentRequest);
+	}
+
+	@Transactional
+	public void deletePayment(Long customerId, Long paymentId) {
+		Customer customer = customerRepository.getReferenceById(customerId);
+		Payment payment = paymentService.findByIdAndCustomerAndDeletedAtIsNull(paymentId, customer);
+		paymentService.deletePayment(payment);
 	}
 }

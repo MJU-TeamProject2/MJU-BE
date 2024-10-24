@@ -25,8 +25,19 @@ public final class AccessPath {
 		MultiValueMap<String, HttpMethod> customerAllowedPath = new LinkedMultiValueMap<>();
 		// review
 		customerAllowedPath.put("/api/v1/customer/profile", List.of(HttpMethod.GET, HttpMethod.PATCH));
+
+		customerAllowedPath.put("/api/v1/customer/payment", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
+		customerAllowedPath.put("/api/v1/customer/payment/{paymentId}", List.of(HttpMethod.GET, HttpMethod.DELETE));
+
+		customerAllowedPath.put("/api/v1/customer/address", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
+		customerAllowedPath.put("/api/v1/customer/address/{addressId}", List.of(HttpMethod.GET, HttpMethod.DELETE));
+
 		customerAllowedPath.put("/api/v1/carts", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
 		customerAllowedPath.put("/api/v1/carts/{cartId}", List.of(HttpMethod.DELETE));
+
+		customerAllowedPath.put("/api/v1/orders", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
+		customerAllowedPath.put("/api/v1/orders/{orderId}", List.of(HttpMethod.GET, HttpMethod.DELETE));
+
 		return customerAllowedPath;
 	}
 
