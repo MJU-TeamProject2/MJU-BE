@@ -67,10 +67,8 @@ public class CustomerService {
 		auth.updateRefreshToken(refreshToken);
 
 		return LoginResponse.builder()
-			.customerId(customer.getId())
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
-			.role(customer.getRole())
 			.build();
 	}
 
