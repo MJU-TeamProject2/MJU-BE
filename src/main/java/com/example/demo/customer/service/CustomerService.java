@@ -81,6 +81,7 @@ public class CustomerService {
 	@Transactional
 	public void updateProfile(Long customerId, ProfileUpdateRequest profileUpdateRequest) {
 		Customer customer = customerRepository.getReferenceById(customerId);
+		authService.update(customer.getEmail(), profileUpdateRequest.email());
 		customer.update(profileUpdateRequest.email(), profileUpdateRequest.name(), profileUpdateRequest.nickName(),
 			profileUpdateRequest.age(), profileUpdateRequest.phoneNumber());
 	}

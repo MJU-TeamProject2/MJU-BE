@@ -20,4 +20,9 @@ public class AuthService {
 		return authRepository.findByCode(code)
 			.orElseThrow(CustomerAuthNotFoundException::new);
 	}
+
+	public void update(String email, String newCode) {
+		Auth auth = findByCode(email);
+		auth.update(newCode);
+	}
 }
