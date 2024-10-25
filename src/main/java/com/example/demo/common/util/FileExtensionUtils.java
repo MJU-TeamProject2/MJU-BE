@@ -33,6 +33,8 @@ public class FileExtensionUtils {
 			return IMAGE_EXTENSIONS.get(extension);
 		} else if (extension.contains("obj")) {
 			return "object.obj";
+		} else if (extension.contains("mtl")) {
+			return "object.mtl";
 		} else {
 			throw new IllegalArgumentException("지원하지 않는 파일 형식입니다.");
 		}
