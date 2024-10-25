@@ -1,7 +1,5 @@
 package com.example.demo.cart.dto.request;
 
-import com.example.demo.clothes.entity.Size;
-import com.example.demo.clothes.util.SizeValidation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
