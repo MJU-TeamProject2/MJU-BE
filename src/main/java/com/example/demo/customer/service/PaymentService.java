@@ -1,17 +1,18 @@
 package com.example.demo.customer.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.example.demo.customer.dto.request.AddPaymentRequest;
 import com.example.demo.customer.dto.request.UpdatePaymentRequest;
-import com.example.demo.customer.entity.Address;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.entity.Payment;
 import com.example.demo.customer.repository.PaymentRepository;
 import com.example.demo.exception.CustomerPaymentNotFoundExeption;
-import java.time.LocalDateTime;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

@@ -37,4 +37,8 @@ public class Auth {
 	public void logout() {
 		this.refreshToken = null;
 	}
+
+	public void update(String email) {
+		this.code = email;
+	}
 }
