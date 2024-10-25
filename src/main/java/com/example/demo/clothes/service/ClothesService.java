@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.clothes.dto.request.UpdateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
-import com.example.demo.clothes.dto.response.GetClothesObject;
+import com.example.demo.clothes.dto.response.GetClothesFile;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.entity.ClothesCategory;
@@ -147,14 +147,24 @@ public class ClothesService {
 		clothes.delete(LocalDateTime.now());
 	}
 
-	public GetClothesObject getClothesObject(Long clothesId) {
+	public GetClothesFile getClothesObject(Long clothesId) {
 		Clothes clothes = clothesRepository.findByIdAndDeletedAtIsNull(clothesId)
 			.orElseThrow(ClothesNotFoundException::new);
 		String objectKey = clothes.getObjectKey();
 		byte[] s3Object = s3Service.getObject(objectKey);
 		String filename = objectKey.substring(objectKey.lastIndexOf("/") + 1);
 
-		return GetClothesObject.of(clothesId, s3Object, filename);
+		return GetClothesFile.of(clothesId, s3Object, filename);
+	}
+
+	public GetClothesFile getClothesMtl(Long clothesId) {
+		Clothes clothes = clothesRepository.findByIdAndDeletedAtIsNull(clothesId)
+			.orElseThrow(ClothesNotFoundException::new);
+		String mtlKey = clothes.getMtlKey();
+		byte[] s3Mtl = s3Service.getObject(mtlKey);
+		String filename = mtlKey.substring(mtlKey.lastIndexOf("/") + 1);
+
+		return GetClothesFile.of(clothesId, s3Mtl, filename);
 	}
 
 	private void checkProductDuplicate(String productNumber) {
