@@ -88,8 +88,19 @@ public interface ClothesController {
 			responseCode = "200",
 			description = "성공적으로 조회")
 	})
-	@GetMapping("/download/{clothesId}")
+	@GetMapping("/download/{clothesId}/obj")
 	ResponseEntity<byte[]> getClothesObject(
+		@PathVariable Long clothesId
+	);
+
+	@Operation(summary = "의류 mtl 파일 다운", description = "특정 의류 mtl 파일 바로 다운")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "성공적으로 조회")
+	})
+	@GetMapping("/download/{clothesId}/mtl")
+	ResponseEntity<byte[]> getClothesMtlFile(
 		@PathVariable Long clothesId
 	);
 
