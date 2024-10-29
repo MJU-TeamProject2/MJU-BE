@@ -39,17 +39,11 @@ public class OrderApplicationService {
   @Transactional(readOnly = true)
   public List<GetOrderResponse> getOrderItems(Long customerId) {
     Customer customer = customerService.findById(customerId);
-    List<Order> orders = orderService.findByCustomer(customer);
-    return GetOrderResponse.listOf(
-        orders.stream()
-            .map(order -> {
-              Clothes clothes = order.getClothes();
-              clothes.setImageUrl(s3Service.generatePresignedUrl(clothes.getImageUrl()));
-              clothes.setDetailUrl(s3Service.generatePresignedUrl(clothes.getDetailUrl()));
-              return order;
-            })
-            .collect(Collectors.toList())
-    );
+    return orderService.findByCustomer(customer).stream()
+        .map(order -> GetOrderResponse.from(order,
+            s3Service.generatePresignedUrl(order.getClothes().getImageUrl()),
+            s3Service.generatePresignedUrl(order.getClothes().getDetailUrl())))
+        .toList();
   }
 
   @Transactional(readOnly = true)
