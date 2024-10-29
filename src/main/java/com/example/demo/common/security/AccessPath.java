@@ -47,6 +47,10 @@ public final class AccessPath {
 		adminAllowedPath.put("/api/v1/clothes/product", List.of(HttpMethod.POST));
 		adminAllowedPath.put("/api/v1/admin/test", List.of(HttpMethod.GET));
 		adminAllowedPath.put("/api/v1/clothes/{clothesId}", List.of(HttpMethod.PATCH, HttpMethod.DELETE));
+
+		adminAllowedPath.put("/api/v1/admin/orders", List.of(HttpMethod.GET, HttpMethod.PATCH));
+		adminAllowedPath.put("/api/v1/admin/orders/{orderId}", List.of(HttpMethod.GET));
+
 		return adminAllowedPath;
 	}
 }
