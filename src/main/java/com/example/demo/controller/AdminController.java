@@ -5,6 +5,8 @@ import com.example.demo.admin.dto.response.AdminGetOrderDetailResponse;
 import com.example.demo.admin.dto.response.AdminGetOrderResponse;
 import com.example.demo.common.security.AuthInfo;
 import com.example.demo.common.security.JwtInfo;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Admin API", description = "관리자 API")
 public interface AdminController {
@@ -44,7 +47,27 @@ public interface AdminController {
 			)
 	})
 	@GetMapping("/orders")
-	ResponseEntity<SuccessResponse<List<AdminGetOrderResponse>>> getOrders(@AuthInfo JwtInfo jwtInfo);
+	ResponseEntity<SuccessResponse<List<AdminGetOrderResponse>>> getOrders(
+			@AuthInfo JwtInfo jwtInfo,
+			@Parameter(
+					description = "회원 ID (선택적, 입력시 해당 회원의 주문만 조회)",
+					example = "123",
+					schema = @Schema(type = "integer", format = "int64")
+			)
+			@RequestParam(required = false) Long memberId,
+			@Parameter(
+					description = "페이지 크기",
+					example = "20",
+					schema = @Schema(type = "integer", defaultValue = "20", minimum = "1")
+			)
+			@RequestParam(value = "size", required = false, defaultValue = "20") int size,
+			@Parameter(
+					description = "페이지 번호 (0부터 시작)",
+					example = "0",
+					schema = @Schema(type = "integer", defaultValue = "0", minimum = "0")
+			)
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page
+	);
 
 	@Operation(summary = "관리자 주문 상세 조회", description = "특정 주문의 상세 정보를 조회합니다.")
 	@ApiResponses(value = {
