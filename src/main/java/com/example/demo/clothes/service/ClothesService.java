@@ -112,7 +112,7 @@ public class ClothesService {
 		if (updateClothesRequest.objectFile() != null) {
 			objectKey = s3Service.uploadFile(updateClothesRequest.objectFile(), "object");
 		}
-		if (updateClothesRequest.objectFile() != null) {
+		if (updateClothesRequest.mtlFile() != null) {
 			mtlKey = s3Service.uploadFile(updateClothesRequest.mtlFile(), "mtl");
 		}
 

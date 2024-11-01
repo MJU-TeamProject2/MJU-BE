@@ -31,17 +31,11 @@ public class CartApplicationService {
   @Transactional(readOnly = true)
   public List<GetCartResponse> getCartItems(Long customerId) {
     Customer customer = customerService.findById(customerId);
-    List<Cart> carts = cartService.findByCustomer(customer);
-    return GetCartResponse.listOf(
-        carts.stream()
-            .map(cart -> {
-              Clothes clothes = cart.getClothes();
-              clothes.setImageUrl(s3Service.generatePresignedUrl(clothes.getImageUrl()));
-              clothes.setDetailUrl(s3Service.generatePresignedUrl(clothes.getDetailUrl()));
-              return cart;
-            })
-            .collect(Collectors.toList())
-    );
+    return cartService.findByCustomer(customer).stream()
+        .map(cart -> GetCartResponse.from(cart,
+            s3Service.generatePresignedUrl(cart.getClothes().getImageUrl()),
+            s3Service.generatePresignedUrl(cart.getClothes().getDetailUrl())))
+        .toList();
   }
 
   @Transactional
