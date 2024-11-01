@@ -48,7 +48,6 @@ public interface AdminController {
 	})
 	@GetMapping("/orders")
 	ResponseEntity<SuccessResponse<List<AdminGetOrderResponse>>> getOrders(
-			@AuthInfo JwtInfo jwtInfo,
 			@Parameter(
 					description = "회원 ID (선택적, 입력시 해당 회원의 주문만 조회)",
 					example = "123",
@@ -77,9 +76,7 @@ public interface AdminController {
 			)
 	})
 	@GetMapping("/orders/{orderId}")
-	ResponseEntity<SuccessResponse<AdminGetOrderDetailResponse>> getOrder(
-			@AuthInfo JwtInfo jwtInfo, @PathVariable Long orderId
-	);
+	ResponseEntity<SuccessResponse<AdminGetOrderDetailResponse>> getOrder(@PathVariable Long orderId);
 
 	@Operation(summary = "관리자 주문 상태 수정", description = "주문의 상태를 수정합니다.")
 	@ApiResponses(value = {
@@ -90,7 +87,6 @@ public interface AdminController {
 	})
 	@PatchMapping("/orders")
 	ResponseEntity<SuccessResponse<Void>> updateOrder(
-			@AuthInfo JwtInfo jwtInfo,
 			@Valid @RequestBody AdminUpdateOrderRequest adminUpdateOrderRequest
 	);
 }

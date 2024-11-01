@@ -11,6 +11,8 @@ import com.example.demo.order.exception.OrderNotFoundException;
 import com.example.demo.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -47,11 +49,24 @@ public class OrderService {
     );
   }
 
+  public Order findById(Long orderId) {
+    return orderRepository.findById(orderId)
+        .orElseThrow(OrderNotFoundException::new);
+  }
+
   public void save(Order order) {
     orderRepository.save(order);
   }
 
   public void deleteFromOrder(Order order) {
     orderRepository.delete(order);
+  }
+
+  public Page<Order> findAll(Pageable pageable) {
+    return orderRepository.findAll(pageable);
+  }
+
+  public Page<Order> findByCustomer(Customer customer, Pageable pageable) {
+    return orderRepository.findByCustomer(customer, pageable);
   }
 }

@@ -47,7 +47,6 @@ public class AdminControllerImpl implements AdminController {
 	@Override
 	@GetMapping("/orders")
 	public ResponseEntity<SuccessResponse<List<AdminGetOrderResponse>>> getOrders(
-			@AuthInfo JwtInfo jwtInfo,
 			@Parameter(description = "사용자 ID", example = "1")
 			@RequestParam(required = false) Long memberId,
 			@Parameter(description = "페이지 크기", example = "20")
@@ -56,26 +55,23 @@ public class AdminControllerImpl implements AdminController {
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page
 	) {
 		return SuccessResponse.of(
-				adminOrderApplicationService.getOrders(jwtInfo.memberId(), memberId, PageRequest.of(page, size))
+				adminOrderApplicationService.getOrders(memberId, PageRequest.of(page, size))
 		).asHttp(HttpStatus.OK);
 	}
 
 	@Override
 	@GetMapping("/orders/{orderId}")
-	public ResponseEntity<SuccessResponse<AdminGetOrderDetailResponse>> getOrder(
-			@AuthInfo JwtInfo jwtInfo,
-			@PathVariable Long orderId) {
+	public ResponseEntity<SuccessResponse<AdminGetOrderDetailResponse>> getOrder(@PathVariable Long orderId) {
 		return SuccessResponse.of(
-				adminOrderApplicationService.getOrder(jwtInfo.memberId(), orderId)
+				adminOrderApplicationService.getOrder(orderId)
 		).asHttp(HttpStatus.OK);
 	}
 
 	@Override
 	@PatchMapping("/orders")
 	public ResponseEntity<SuccessResponse<Void>> updateOrder(
-			@AuthInfo JwtInfo jwtInfo,
 			@Valid @RequestBody AdminUpdateOrderRequest adminUpdateOrderRequest) {
-		adminOrderApplicationService.updateOrder(jwtInfo.memberId(), adminUpdateOrderRequest);
+		adminOrderApplicationService.updateOrder(adminUpdateOrderRequest);
 		return SuccessResponse.ofNoData().asHttp(HttpStatus.OK);
 	}
 
