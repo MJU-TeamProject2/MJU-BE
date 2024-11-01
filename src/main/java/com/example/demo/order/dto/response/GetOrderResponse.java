@@ -18,6 +18,7 @@ public record GetOrderResponse(
     String name,
     Integer quantity,
     Integer price,
+    String detailUrl,
     Integer discount,
     Size size,
     OrderStatus orderStatus,
@@ -26,17 +27,34 @@ public record GetOrderResponse(
   public static List<GetOrderResponse> listOf(List<Order> orders) {
     return orders.stream()
         .map(order -> GetOrderResponse.builder()
-                .orderId(order.getId())
-                .clothesId(order.getClothes().getId())
-                .imageUrl(order.getClothes().getImageUrl())
-                .name(order.getClothes().getName())
-                .quantity(order.getQuantity())
-                .price(order.getClothes().getPrice())
-                .discount(order.getClothes().getDiscount())
-                .size(order.getClothesSize().getSize())
-                .orderStatus(order.getStatus())
-                .createdAt(order.getCreatedAt()))
-        .map(GetOrderResponse.GetOrderResponseBuilder::build)
+            .orderId(order.getId())
+            .clothesId(order.getClothes().getId())
+            .imageUrl(order.getClothes().getImageUrl())
+            .detailUrl(order.getClothes().getDetailUrl())
+            .name(order.getClothes().getName())
+            .quantity(order.getQuantity())
+            .price(order.getClothes().getPrice())
+            .discount(order.getClothes().getDiscount())
+            .size(order.getClothesSize().getSize())
+            .orderStatus(order.getStatus())
+            .createdAt(order.getCreatedAt())
+            .build())
         .toList();
+  }
+
+  public static GetOrderResponse from(Order order, String presignedImageUrl, String presignedDetailUrl) {
+    return GetOrderResponse.builder()
+        .orderId(order.getId())
+        .clothesId(order.getClothes().getId())
+        .imageUrl(presignedImageUrl)
+        .detailUrl(presignedDetailUrl)
+        .name(order.getClothes().getName())
+        .quantity(order.getQuantity())
+        .price(order.getClothes().getPrice())
+        .discount(order.getClothes().getDiscount())
+        .size(order.getClothesSize().getSize())
+        .orderStatus(order.getStatus())
+        .createdAt(order.getCreatedAt())
+        .build();
   }
 }

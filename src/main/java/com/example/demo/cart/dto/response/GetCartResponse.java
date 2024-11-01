@@ -35,4 +35,19 @@ public record GetCartResponse(
         .map(GetCartResponse.GetCartResponseBuilder::build)
         .toList();
   }
+
+  public static GetCartResponse from(Cart cart, String presignedImageUrl, String presignedDetailUrl) {
+    return GetCartResponse.builder()
+        .cartId(cart.getId())
+        .clothesId(cart.getClothes().getId())
+        .imageUrl(presignedImageUrl)
+        .detailUrl(presignedDetailUrl)
+        .name(cart.getClothes().getName())
+        .quantity(cart.getQuantity())
+        .price(cart.getClothes().getPrice())
+        .discount(cart.getClothes().getDiscount())
+        .size(cart.getClothesSize().getSize())
+        .availableQuantity(cart.getClothesSize().getQuantity())
+        .build();
+  }
 }
