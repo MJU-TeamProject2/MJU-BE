@@ -12,7 +12,8 @@ public record GetAddressResponse(
     Long addressId,
     String name,
     String recipient,
-    String baseAddress
+    String baseAddress,
+    String zipCode
 ) {
   public static List<GetAddressResponse> listOf(List<Address> addresses) {
     return addresses.stream()
@@ -20,6 +21,7 @@ public record GetAddressResponse(
             .addressId(address.getId())
             .name(address.getName())
             .recipient(address.getRecipient())
+            .zipCode(address.getZipCode())
             .baseAddress(address.getBaseAddress()))
         .map(GetAddressResponse.GetAddressResponseBuilder::build)
         .toList();
