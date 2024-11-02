@@ -26,11 +26,11 @@ public final class AccessPath {
 		// review
 		customerAllowedPath.put("/api/v1/customer/profile", List.of(HttpMethod.GET, HttpMethod.PATCH));
 
-		customerAllowedPath.put("/api/v1/customer/payment", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
-		customerAllowedPath.put("/api/v1/customer/payment/{paymentId}", List.of(HttpMethod.GET, HttpMethod.DELETE));
+		customerAllowedPath.put("/api/v1/customer/payments", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
+		customerAllowedPath.put("/api/v1/customer/payments/{paymentId}", List.of(HttpMethod.GET, HttpMethod.DELETE));
 
-		customerAllowedPath.put("/api/v1/customer/address", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
-		customerAllowedPath.put("/api/v1/customer/address/{addressId}", List.of(HttpMethod.GET, HttpMethod.DELETE));
+		customerAllowedPath.put("/api/v1/customer/addresses", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
+		customerAllowedPath.put("/api/v1/customer/addresses/{addressId}", List.of(HttpMethod.GET, HttpMethod.DELETE));
 
 		customerAllowedPath.put("/api/v1/carts", List.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.PATCH));
 		customerAllowedPath.put("/api/v1/carts/{cartId}", List.of(HttpMethod.DELETE));
@@ -47,6 +47,10 @@ public final class AccessPath {
 		adminAllowedPath.put("/api/v1/clothes/product", List.of(HttpMethod.POST));
 		adminAllowedPath.put("/api/v1/admin/test", List.of(HttpMethod.GET));
 		adminAllowedPath.put("/api/v1/clothes/{clothesId}", List.of(HttpMethod.PATCH, HttpMethod.DELETE));
+
+		adminAllowedPath.put("/api/v1/admin/orders", List.of(HttpMethod.GET, HttpMethod.PATCH));
+		adminAllowedPath.put("/api/v1/admin/orders/{orderId}", List.of(HttpMethod.GET));
+
 		return adminAllowedPath;
 	}
 }
