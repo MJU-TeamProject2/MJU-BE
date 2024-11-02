@@ -4,8 +4,6 @@ import com.example.demo.admin.dto.request.AdminUpdateOrderRequest;
 import com.example.demo.admin.dto.response.AdminGetOrderDetailResponse;
 import com.example.demo.admin.dto.response.AdminGetOrderResponse;
 import com.example.demo.admin.service.application.AdminOrderApplicationService;
-import com.example.demo.common.security.AuthInfo;
-import com.example.demo.common.security.JwtInfo;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.util.List;
