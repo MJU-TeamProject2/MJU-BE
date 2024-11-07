@@ -23,12 +23,14 @@ public record GetOrderDetailResponse(
 ) {
 
   public record Payment(
+      Long paymentId,
       String cardNumber,
       CardProvider cardProvider
   ) {}
 
   public record Address(
       Long addressId,
+      String name,
       String recipient,
       String zipCode,
       String baseAddress,
@@ -47,11 +49,13 @@ public record GetOrderDetailResponse(
         .discount(order.getClothes().getDiscount())
         .size(order.getClothesSize().getSize())
         .payment(new Payment(
+            order.getPayment().getId(),
             order.getPayment().getCardNumber(),
             order.getPayment().getCardProvider()
         ))
         .address(new Address(
             order.getAddress().getId(),
+            order.getAddress().getName(),
             order.getAddress().getRecipient(),
             order.getAddress().getZipCode(),
             order.getAddress().getBaseAddress(),
