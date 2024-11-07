@@ -1,14 +1,16 @@
-package com.example.demo.order.dto.response;
+package com.example.demo.admin.dto.response;
 
 import com.example.demo.clothes.entity.Size;
 import com.example.demo.customer.entity.CardProvider;
 import com.example.demo.order.entity.Order;
+import com.example.demo.order.entity.OrderStatus;
 import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-public record GetOrderDetailResponse(
+public record AdminGetOrderDetailResponse(
     Long orderId,
+    Customer customer,
     Long clothesId,
     String imageUrl,
     String detailUrl,
@@ -17,45 +19,55 @@ public record GetOrderDetailResponse(
     Integer price,
     Integer discount,
     Size size,
+    OrderStatus orderStatus,
     Payment payment,
     Address address,
     LocalDateTime createAt
 ) {
+  public record Customer(
+      Long customerId,
+      String name,
+      String email,
+      String phone
+  ) {}
 
   public record Payment(
-      Long paymentId,
       String cardNumber,
       CardProvider cardProvider
   ) {}
 
   public record Address(
       Long addressId,
-      String name,
       String recipient,
       String zipCode,
       String baseAddress,
       String detailAddress
   ) {}
 
-  public static GetOrderDetailResponse from(Order order) {
-    return GetOrderDetailResponse.builder()
+  public static AdminGetOrderDetailResponse from(Order order, String presignedImageUrl, String presignedDetailUrl) {
+    return AdminGetOrderDetailResponse.builder()
         .orderId(order.getId())
+        .customer(new Customer(
+            order.getCustomer().getId(),
+            order.getCustomer().getName(),
+            order.getCustomer().getEmail(),
+            order.getCustomer().getPhoneNumber()
+        ))
         .clothesId(order.getClothes().getId())
-        .imageUrl(order.getClothes().getImageUrl())
-        .detailUrl(order.getClothes().getDetailUrl())
+        .imageUrl(presignedImageUrl)
+        .detailUrl(presignedDetailUrl)
         .name(order.getClothes().getName())
         .quantity(order.getQuantity())
         .price(order.getClothes().getPrice())
         .discount(order.getClothes().getDiscount())
         .size(order.getClothesSize().getSize())
+        .orderStatus(order.getStatus())
         .payment(new Payment(
-            order.getPayment().getId(),
             order.getPayment().getCardNumber(),
             order.getPayment().getCardProvider()
         ))
         .address(new Address(
             order.getAddress().getId(),
-            order.getAddress().getName(),
             order.getAddress().getRecipient(),
             order.getAddress().getZipCode(),
             order.getAddress().getBaseAddress(),
@@ -64,5 +76,4 @@ public record GetOrderDetailResponse(
         .createAt(order.getCreatedAt())
         .build();
   }
-
 }

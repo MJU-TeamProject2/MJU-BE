@@ -59,7 +59,7 @@ public class OrderApplicationService {
   public void addToOrderItem(Long customerId, @Valid AddToOrderItemRequest addToOrderItemRequest) {
     Cart cart = cartService.findByIdAndCustomerId(addToOrderItemRequest.cartId(), customerId);
     Customer customer = customerService.findById(customerId);
-    Address address = addressService.findOneByIdAndCustomer(addToOrderItemRequest.AddressId(), customer);
+    Address address = addressService.findOneByIdAndCustomer(addToOrderItemRequest.addressId(), customer);
     Payment payment = paymentService.findOneByIdAndCustomer(addToOrderItemRequest.paymentId(), customer);
 
     orderService.addToOrderItem(customer, cart, address, payment);
