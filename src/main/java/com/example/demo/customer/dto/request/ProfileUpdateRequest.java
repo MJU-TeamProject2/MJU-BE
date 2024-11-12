@@ -31,15 +31,13 @@ public record ProfileUpdateRequest(@Schema(description = "이름", requiredMode 
 								   @Pattern(regexp = "^\\d{3}-\\d{4}-\\d{4}$", message = "전화번호는 xxx-xxxx-xxxx 형식이어야 합니다")
 								   String phoneNumber,
 										@Schema(description = "키", requiredMode = Schema.RequiredMode.REQUIRED)
-										@NotBlank(message = "키는 필수입니다.")
 										@Min(value = 0, message = "키는 0보다 커야 합니다.")
 										@Max(value = 300, message = "키는 300보다 작아야 합니다.")
-										Integer height,
+										int height,
 										@Schema(description = "몸무게", requiredMode = Schema.RequiredMode.REQUIRED)
-										@NotBlank(message = "몸무게는 필수입니다.")
 										@Min(value = 0, message = "몸무게는 0보다 커야 합니다.")
 										@Max(value = 300, message = "몸무게는 300보다 작아야 합니다.")
-										Integer weight,
+										int weight,
 										@Schema(description = "체형", requiredMode = Schema.RequiredMode.REQUIRED, allowableValues = {"STANDARD", "SMALL_INVERTED_TRIANGLE", "LARGE_TRIANGLE", "INVERTED_TRIANGLE", "RECTANGLE"})
 										@NotNull(message = "체형은 필수입니다.")
 										BodyType bodyType) {
