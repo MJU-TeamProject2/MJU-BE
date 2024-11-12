@@ -57,6 +57,9 @@ public class CustomerControllerImpl implements CustomerController {
 			.email(registerRequest.email())
 			.password(passwordEncoder.encode(registerRequest.password()))
 			.phoneNumber(registerRequest.phoneNumber())
+			.height(registerRequest.height())
+			.weight(registerRequest.weight())
+			.bodyType(registerRequest.bodyType())
 			.build();
 		customerService.register(customer);
 
