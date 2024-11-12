@@ -68,7 +68,7 @@ public class CustomerService {
 		Auth auth = authService.findByCode(customer.getEmail());
 		auth.updateRefreshToken(refreshToken);
 
-		String bodyObjectUrl = s3Service.generatePresignedUrl("object/"+ customer.getGender() + "" + customer.getBodyType());
+		String bodyObjectUrl = s3Service.generatePresignedUrl("object/"+ customer.getGender() + "" + customer.getBodyType() + ".obj");
 
 		return LoginResponse.builder()
 			.accessToken(accessToken)
