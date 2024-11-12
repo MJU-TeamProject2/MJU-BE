@@ -41,6 +41,7 @@ public class Customer extends BaseEntity {
 	private Integer height;
 	private Integer weight;
 	@Column(name = "body_type")
+	@Enumerated(EnumType.STRING)
 	private BodyType bodyType;
 
 	@Builder
