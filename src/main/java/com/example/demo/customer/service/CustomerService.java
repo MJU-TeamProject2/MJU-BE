@@ -79,8 +79,8 @@ public class CustomerService {
 
 	@Transactional(readOnly = true)
 	public GetCustomerResponse retrieveProfile(Long customerId) {
-		return GetCustomerResponse.from(customerRepository.findById(customerId).orElseThrow(
-			CustomerAuthNotFoundException::new));
+		Customer customer = customerRepository.findById(customerId).orElseThrow(CustomerNotFoundException::new);
+		return GetCustomerResponse.from(customer, s3Service.generatePresignedUrl("object/"+ customer.getGender() + "" + customer.getBodyType() + ".obj"));
 	}
 
 	@Transactional
