@@ -1,7 +1,12 @@
 package com.example.demo.customer.dto.request;
 
+import com.example.demo.customer.entity.BodyType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -24,5 +29,16 @@ public record ProfileUpdateRequest(@Schema(description = "이름", requiredMode 
 								   String email,
 								   @Schema(description = "전화번호", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 								   @Pattern(regexp = "^\\d{3}-\\d{4}-\\d{4}$", message = "전화번호는 xxx-xxxx-xxxx 형식이어야 합니다")
-								   String phoneNumber) {
+								   String phoneNumber,
+										@Schema(description = "키", requiredMode = Schema.RequiredMode.REQUIRED)
+										@Min(value = 0, message = "키는 0보다 커야 합니다.")
+										@Max(value = 300, message = "키는 300보다 작아야 합니다.")
+										int height,
+										@Schema(description = "몸무게", requiredMode = Schema.RequiredMode.REQUIRED)
+										@Min(value = 0, message = "몸무게는 0보다 커야 합니다.")
+										@Max(value = 300, message = "몸무게는 300보다 작아야 합니다.")
+										int weight,
+										@Schema(description = "체형", requiredMode = Schema.RequiredMode.REQUIRED, allowableValues = {"STANDARD", "SMALL_INVERTED_TRIANGLE", "LARGE_TRIANGLE", "INVERTED_TRIANGLE", "RECTANGLE"})
+										@NotNull(message = "체형은 필수입니다.")
+										BodyType bodyType) {
 }

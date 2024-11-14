@@ -3,8 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.admin.dto.request.AdminUpdateOrderRequest;
 import com.example.demo.admin.dto.response.AdminGetOrderDetailResponse;
 import com.example.demo.admin.dto.response.AdminGetOrderResponse;
-import com.example.demo.common.security.AuthInfo;
-import com.example.demo.common.security.JwtInfo;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;

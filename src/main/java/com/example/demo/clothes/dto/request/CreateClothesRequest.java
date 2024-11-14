@@ -60,6 +60,9 @@ public record CreateClothesRequest(
 	@Schema(description = "상품 3D Object", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "3D Object 파일은 필수입니다.")
 	MultipartFile objectFile,
+	@Schema(description = "3D Female Object", requiredMode = Schema.RequiredMode.REQUIRED)
+	@NotNull(message = "3D Female Object 파일은 필수입니다.")
+	MultipartFile objectFemaleFile,
 	@Schema(description = "상품 mtl 파일", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "mtl 파일은 필수입니다.")
 	MultipartFile mtlFile) {

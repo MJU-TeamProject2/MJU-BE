@@ -1,5 +1,6 @@
 package com.example.demo.customer.service;
 
+import com.example.demo.common.util.S3Service;
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +41,7 @@ public class CustomerService {
 	private final AuthService authService;
 	private final AddressService addressService;
 	private final PaymentService paymentService;
+	private final S3Service s3Service;
 
 	public void register(Customer customer) {
 		Customer newCustomer = customerRepository.save(customer);
@@ -66,16 +68,19 @@ public class CustomerService {
 		Auth auth = authService.findByCode(customer.getEmail());
 		auth.updateRefreshToken(refreshToken);
 
+		String bodyObjectUrl = s3Service.generatePresignedUrl("object/"+ customer.getGender() + "" + customer.getBodyType() + ".obj");
+
 		return LoginResponse.builder()
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
+				.bodyObjectUrl(bodyObjectUrl)
 			.build();
 	}
 
 	@Transactional(readOnly = true)
 	public GetCustomerResponse retrieveProfile(Long customerId) {
-		return GetCustomerResponse.from(customerRepository.findById(customerId).orElseThrow(
-			CustomerAuthNotFoundException::new));
+		Customer customer = customerRepository.findById(customerId).orElseThrow(CustomerNotFoundException::new);
+		return GetCustomerResponse.from(customer, s3Service.generatePresignedUrl("object/"+ customer.getGender() + "" + customer.getBodyType() + ".obj"));
 	}
 
 	@Transactional
@@ -83,7 +88,8 @@ public class CustomerService {
 		Customer customer = customerRepository.getReferenceById(customerId);
 		authService.update(customer.getEmail(), profileUpdateRequest.email());
 		customer.update(profileUpdateRequest.email(), profileUpdateRequest.name(), profileUpdateRequest.nickName(),
-			profileUpdateRequest.age(), profileUpdateRequest.phoneNumber());
+			profileUpdateRequest.age(), profileUpdateRequest.phoneNumber(), profileUpdateRequest.weight(),
+				profileUpdateRequest.height(), profileUpdateRequest.bodyType());
 	}
 
 	public Customer findById(Long customerId) {
