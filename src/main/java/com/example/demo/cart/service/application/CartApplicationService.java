@@ -12,7 +12,6 @@ import com.example.demo.clothes.service.ClothesSizeService;
 import com.example.demo.common.util.S3Service;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.service.CustomerService;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
