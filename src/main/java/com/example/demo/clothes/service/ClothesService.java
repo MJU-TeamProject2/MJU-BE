@@ -51,8 +51,9 @@ public class ClothesService {
 		String imageUrl = s3Service.generatePresignedUrl(clothes.getImageUrl());
 		String detailUrl = s3Service.generatePresignedUrl(clothes.getDetailUrl());
 		String objectUrl = s3Service.generatePresignedUrl(clothes.getObjectKey());
+		String objectFemaleUrl = s3Service.generatePresignedUrl(clothes.getObjectFemaleKey());
 		String mtlUrl = s3Service.generatePresignedUrl(clothes.getMtlKey());
-		return GetClothesDetailResponse.of(clothes, imageUrl, detailUrl, objectUrl, mtlUrl);
+		return GetClothesDetailResponse.of(clothes, imageUrl, detailUrl, objectUrl, mtlUrl, objectFemaleUrl);
 	}
 
 	@Transactional
@@ -97,6 +98,7 @@ public class ClothesService {
 		String mainUrl = null;
 		String detailUrl = null;
 		String objectKey = null;
+		String objectFemaleKey = null;
 		String mtlKey = null;
 		String category = updateClothesRequest.category() == null ? clothes.getCategory().toString() :
 			updateClothesRequest.category().toString();
@@ -115,6 +117,9 @@ public class ClothesService {
 		if (updateClothesRequest.mtlFile() != null) {
 			mtlKey = s3Service.uploadFile(updateClothesRequest.mtlFile(), "mtl");
 		}
+		if (updateClothesRequest.objectFemaleFile() != null) {
+			objectFemaleKey = s3Service.uploadFile(updateClothesRequest.objectFemaleFile(), "object");
+		}
 
 		clothes.update(updateClothesRequest.category(),
 			mainUrl,
@@ -125,7 +130,9 @@ public class ClothesService {
 			updateClothesRequest.discount(),
 			detailUrl,
 			objectKey,
-			mtlKey);
+			mtlKey,
+			objectFemaleKey);
+
 
 		if (updateClothesRequest.size() == null)
 			return;
