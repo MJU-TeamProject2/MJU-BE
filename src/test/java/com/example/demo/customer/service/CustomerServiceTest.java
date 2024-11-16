@@ -1,7 +1,10 @@
 package com.example.demo.customer.service;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.common.security.TokenProvider;
 import com.example.demo.common.util.auth.AuthService;
 import com.example.demo.customer.entity.Customer;
@@ -49,7 +53,7 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	@DisplayName("고객 회원가입 단위 테스트")
+	@DisplayName("고객 회원가입 성공 테스트")
 	void 회원가입_성공() {
 		// given
 		when(customerRepository.save(any(Customer.class))).thenReturn(customer);
@@ -62,10 +66,28 @@ class CustomerServiceTest {
 		verify(authService).createAuth(customer.getEmail());
 	}
 
-	// @Test
-	// void checkEmailDuplicate() {
-	// }
-	//
+	@Test
+	@DisplayName("이메일 중복 체크 - 중복되지 않은 경우")
+	void 이메일_중복체크_중복X() {
+		// Given
+		String email = "test@test.com";
+		when(customerRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+		// When & Then
+		assertDoesNotThrow(() -> customerService.checkEmailDuplicate(email));
+	}
+
+	@Test
+	@DisplayName("이메일 중복 체크 - 중복 되는 경우")
+	void 이메일_중복체크_중복O() {
+		// Given
+		String email = "test@test.com";
+		when(customerRepository.findByEmail(email)).thenReturn(Optional.of(customer));
+
+		// When & Then
+		assertThrows(CustomException.class, () -> customerService.checkEmailDuplicate(email));
+	}
+
 	// @Test
 	// void login() {
 	// }
