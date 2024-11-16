@@ -41,6 +41,11 @@ class AdminServiceTest {
 	private AuthService authService;
 	private Admin admin;
 
+	private static final String ADMIN_CODE = "Admin001";
+	private static final String ADMIN_PASSWORD = "admin01";
+	private static final String ACCESS_TOKEN = "accessToken";
+	private static final String REFRESH_TOKEN = "refreshToken";
+
 	// 테스트용 Auth 객체 생성 헬퍼 메소드
 	private Auth createTestAuth(String email, String refreshToken) {
 		Auth auth = Auth.createAuth(email);
@@ -62,27 +67,23 @@ class AdminServiceTest {
 	@DisplayName("관리자 로그인 성공 테스트")
 	void 관리자_로그인_성공() {
 		// Given
-		String code = "Admin001";
-		String password = "admin01";
-		String accessToken = "accessToken";
-		String refreshToken = "refreshToken";
-		Auth auth = createTestAuth(code, null);
+		Auth auth = createTestAuth(ADMIN_CODE, null);
 
-		when(adminRepository.findByCode(code)).thenReturn(Optional.of(admin));
-		when(passwordEncoder.matches(password, admin.getPassword())).thenReturn(true);
+		when(adminRepository.findByCode(ADMIN_CODE)).thenReturn(Optional.of(admin));
+		when(passwordEncoder.matches(ADMIN_PASSWORD, admin.getPassword())).thenReturn(true);
 		when(tokenProvider.createAccessToken(admin.getId(), admin.getRole()))
-			.thenReturn(accessToken);
+			.thenReturn(ACCESS_TOKEN);
 		when(tokenProvider.createRefreshToken(admin.getId(), admin.getRole()))
-			.thenReturn(refreshToken);
-		when(authService.findByCode(code)).thenReturn(auth);
+			.thenReturn(REFRESH_TOKEN);
+		when(authService.findByCode(ADMIN_CODE)).thenReturn(auth);
 
 		// When
-		AdminLoginResponse response = adminService.login(code, password);
+		AdminLoginResponse response = adminService.login(ADMIN_CODE, ADMIN_PASSWORD);
 
 		// Then
 		assertNotNull(response);
-		assertEquals(accessToken, response.accessToken());
-		assertEquals(refreshToken, response.refreshToken());
-		verify(authService).findByCode(code);
+		assertEquals(ACCESS_TOKEN, response.accessToken());
+		assertEquals(REFRESH_TOKEN, response.refreshToken());
+		verify(authService).findByCode(ADMIN_CODE);
 	}
 }
