@@ -10,13 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.TestWatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.demo.common.exception.CustomException;
@@ -27,27 +23,13 @@ import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.entity.Gender;
 import com.example.demo.customer.repository.CustomerRepository;
+import com.example.demo.util.TestResultLogger;
 
 import lombok.extern.slf4j.Slf4j;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, TestResultLogger.class})
 @Slf4j
 class CustomerServiceTest {
-
-	@ExtendWith(TestResultLogger.class)
-	static class TestResultLogger implements TestWatcher {
-		private static final Logger log = LoggerFactory.getLogger(TestResultLogger.class);
-
-		@Override
-		public void testSuccessful(ExtensionContext context) {
-			log.info("✅ {} 성공!", context.getDisplayName());
-		}
-
-		@Override
-		public void testFailed(ExtensionContext context, Throwable cause) {
-			log.error("❌ {} 실패! 원인: {}", context.getDisplayName(), cause.getMessage());
-		}
-	}
 
 	@InjectMocks
 	private CustomerService customerService;
@@ -100,7 +82,7 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	@DisplayName("이메일 중복 체크 - 중복되지 않은 경우 테스트 ")
+	@DisplayName("이메일 중복 체크 테스트 - 중복되지 않은 경우")
 	void 이메일_중복체크_중복X() {
 		// Given
 		String email = "test@test.com";
@@ -111,7 +93,7 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	@DisplayName("이메일 중복 체크 - 중복 되는 경우 테스트")
+	@DisplayName("이메일 중복 체크 테스트 - 중복 되는 경우")
 	void 이메일_중복체크_중복O() {
 		// Given
 		String email = "test@test.com";
@@ -148,4 +130,32 @@ class CustomerServiceTest {
 		assertEquals(refreshToken, response.refreshToken());
 		verify(authService).findByCode(email);
 	}
+
+	@Test
+	@DisplayName("로그인 실패 테스트 - 사용자를 찾을 수 없음")
+	void login_UserNotFound() {
+		// Given
+		String email = "nonexistent@test.com";
+		String password = "password";
+		when(customerRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+		// When & Then
+		assertThrows(CustomException.class,
+			() -> customerService.login(email, password));
+	}
+
+	@Test
+	@DisplayName("로그인 실패 테스트 - 잘못된 비밀번호")
+	void login_WrongPassword() {
+		// Given
+		String email = "test@test.com";
+		String password = "wrongpassword";
+		when(customerRepository.findByEmail(email)).thenReturn(Optional.of(customer));
+		when(passwordEncoder.matches(password, customer.getPassword())).thenReturn(false);
+
+		// When & Then
+		assertThrows(CustomException.class,
+			() -> customerService.login(email, password));
+	}
+
 }
