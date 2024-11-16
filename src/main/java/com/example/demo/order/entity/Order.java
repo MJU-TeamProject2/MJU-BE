@@ -71,4 +71,8 @@ public class Order extends BaseEntity {
       throw new OrderStatusNotValidException();
     }
   }
+
+  public void updateOrderStatus(OrderStatus orderStatus) {
+    this.status = orderStatus;
+  }
 }

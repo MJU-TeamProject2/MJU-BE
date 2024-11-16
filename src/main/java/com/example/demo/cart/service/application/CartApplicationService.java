@@ -12,7 +12,6 @@ import com.example.demo.clothes.service.ClothesSizeService;
 import com.example.demo.common.util.S3Service;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.service.CustomerService;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,17 +30,11 @@ public class CartApplicationService {
   @Transactional(readOnly = true)
   public List<GetCartResponse> getCartItems(Long customerId) {
     Customer customer = customerService.findById(customerId);
-    List<Cart> carts = cartService.findByCustomer(customer);
-    return GetCartResponse.listOf(
-        carts.stream()
-            .map(cart -> {
-              Clothes clothes = cart.getClothes();
-              clothes.setImageUrl(s3Service.generatePresignedUrl(clothes.getImageUrl()));
-              clothes.setDetailUrl(s3Service.generatePresignedUrl(clothes.getDetailUrl()));
-              return cart;
-            })
-            .collect(Collectors.toList())
-    );
+    return cartService.findByCustomer(customer).stream()
+        .map(cart -> GetCartResponse.from(cart,
+            s3Service.generatePresignedUrl(cart.getClothes().getImageUrl()),
+            s3Service.generatePresignedUrl(cart.getClothes().getDetailUrl())))
+        .toList();
   }
 
   @Transactional

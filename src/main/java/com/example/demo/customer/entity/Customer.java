@@ -38,9 +38,14 @@ public class Customer extends BaseEntity {
 	@Column(name = "phone_number")
 	private String phoneNumber;
 	private boolean deleted;
+	private Integer height;
+	private Integer weight;
+	@Column(name = "body_type")
+	@Enumerated(EnumType.STRING)
+	private BodyType bodyType;
 
 	@Builder
-	public Customer(String name, String nickName, int age, Gender gender, String email, String password, String phoneNumber) {
+	public Customer(String name, String nickName, int age, Gender gender, String email, String password, String phoneNumber, int weight, int height, BodyType bodyType) {
 		this.name = name;
 		this.age = age;
 		this.nickName = StringUtils.hasText(nickName) ? nickName : name;
@@ -48,6 +53,9 @@ public class Customer extends BaseEntity {
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
+		this.weight = weight;
+		this.height = height;
+		this.bodyType = bodyType;
 		this.deleted = false;
 	}
 
@@ -55,11 +63,14 @@ public class Customer extends BaseEntity {
 		return Role.CUSTOMER;
 	}
 
-	public void update(String email, String name, String nickName, int age, String phoneNumber) {
+	public void update(String email, String name, String nickName, int age, String phoneNumber, int weight, int height, BodyType bodyType) {
 		this.email = email;
 		this.name = name;
 		this.nickName = nickName;
 		this.age = age;
 		this.phoneNumber = phoneNumber;
+		this.weight = weight;
+		this.height = height;
+		this.bodyType = bodyType;
 	}
 }

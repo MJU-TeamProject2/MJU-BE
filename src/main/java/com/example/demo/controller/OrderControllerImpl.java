@@ -1,4 +1,4 @@
-package com.example.demo.order.controller;
+package com.example.demo.controller;
 
 import com.example.demo.common.dto.SuccessResponse;
 import com.example.demo.common.security.AuthInfo;

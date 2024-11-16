@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.clothes.dto.request.UpdateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
-import com.example.demo.clothes.dto.response.GetClothesObject;
+import com.example.demo.clothes.dto.response.GetClothesFile;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.entity.ClothesCategory;
@@ -51,8 +51,9 @@ public class ClothesService {
 		String imageUrl = s3Service.generatePresignedUrl(clothes.getImageUrl());
 		String detailUrl = s3Service.generatePresignedUrl(clothes.getDetailUrl());
 		String objectUrl = s3Service.generatePresignedUrl(clothes.getObjectKey());
+		String objectFemaleUrl = s3Service.generatePresignedUrl(clothes.getObjectFemaleKey());
 		String mtlUrl = s3Service.generatePresignedUrl(clothes.getMtlKey());
-		return GetClothesDetailResponse.of(clothes, imageUrl, detailUrl, objectUrl, mtlUrl);
+		return GetClothesDetailResponse.of(clothes, imageUrl, detailUrl, objectUrl, mtlUrl, objectFemaleUrl);
 	}
 
 	@Transactional
@@ -97,6 +98,7 @@ public class ClothesService {
 		String mainUrl = null;
 		String detailUrl = null;
 		String objectKey = null;
+		String objectFemaleKey = null;
 		String mtlKey = null;
 		String category = updateClothesRequest.category() == null ? clothes.getCategory().toString() :
 			updateClothesRequest.category().toString();
@@ -112,8 +114,11 @@ public class ClothesService {
 		if (updateClothesRequest.objectFile() != null) {
 			objectKey = s3Service.uploadFile(updateClothesRequest.objectFile(), "object");
 		}
-		if (updateClothesRequest.objectFile() != null) {
+		if (updateClothesRequest.mtlFile() != null) {
 			mtlKey = s3Service.uploadFile(updateClothesRequest.mtlFile(), "mtl");
+		}
+		if (updateClothesRequest.objectFemaleFile() != null) {
+			objectFemaleKey = s3Service.uploadFile(updateClothesRequest.objectFemaleFile(), "object");
 		}
 
 		clothes.update(updateClothesRequest.category(),
@@ -125,7 +130,9 @@ public class ClothesService {
 			updateClothesRequest.discount(),
 			detailUrl,
 			objectKey,
-			mtlKey);
+			mtlKey,
+			objectFemaleKey);
+
 
 		if (updateClothesRequest.size() == null)
 			return;
@@ -147,14 +154,24 @@ public class ClothesService {
 		clothes.delete(LocalDateTime.now());
 	}
 
-	public GetClothesObject getClothesObject(Long clothesId) {
+	public GetClothesFile getClothesObject(Long clothesId) {
 		Clothes clothes = clothesRepository.findByIdAndDeletedAtIsNull(clothesId)
 			.orElseThrow(ClothesNotFoundException::new);
 		String objectKey = clothes.getObjectKey();
 		byte[] s3Object = s3Service.getObject(objectKey);
 		String filename = objectKey.substring(objectKey.lastIndexOf("/") + 1);
 
-		return GetClothesObject.of(clothesId, s3Object, filename);
+		return GetClothesFile.of(clothesId, s3Object, filename);
+	}
+
+	public GetClothesFile getClothesMtl(Long clothesId) {
+		Clothes clothes = clothesRepository.findByIdAndDeletedAtIsNull(clothesId)
+			.orElseThrow(ClothesNotFoundException::new);
+		String mtlKey = clothes.getMtlKey();
+		byte[] s3Mtl = s3Service.getObject(mtlKey);
+		String filename = mtlKey.substring(mtlKey.lastIndexOf("/") + 1);
+
+		return GetClothesFile.of(clothesId, s3Mtl, filename);
 	}
 
 	private void checkProductDuplicate(String productNumber) {

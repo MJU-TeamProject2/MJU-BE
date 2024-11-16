@@ -1,33 +1,36 @@
-package com.example.demo.order.dto.response;
+package com.example.demo.admin.dto.response;
 
 import com.example.demo.clothes.entity.Size;
 import com.example.demo.order.entity.Order;
 import com.example.demo.order.entity.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-
 import java.util.List;
 import lombok.Builder;
 
 @Builder
-@Schema(name = "Get Order Response", description = "주문 조회 응답")
-public record GetOrderResponse(
+@Schema(name = "Admin Get Order Response", description = "관리자 주문 목록 조회 응답")
+public record AdminGetOrderResponse(
     Long orderId,
+    Long customerId,
+    String customerName,
     Long clothesId,
     String imageUrl,
+    String detailUrl,
     String name,
     Integer quantity,
     Integer price,
-    String detailUrl,
     Integer discount,
     Size size,
     OrderStatus orderStatus,
     LocalDateTime createdAt
 ) {
-  public static List<GetOrderResponse> listOf(List<Order> orders) {
+  public static List<AdminGetOrderResponse> listOf(List<Order> orders) {
     return orders.stream()
-        .map(order -> GetOrderResponse.builder()
+        .map(order -> AdminGetOrderResponse.builder()
             .orderId(order.getId())
+            .customerId(order.getCustomer().getId())
+            .customerName(order.getCustomer().getName())
             .clothesId(order.getClothes().getId())
             .imageUrl(order.getClothes().getImageUrl())
             .detailUrl(order.getClothes().getDetailUrl())
@@ -42,9 +45,11 @@ public record GetOrderResponse(
         .toList();
   }
 
-  public static GetOrderResponse from(Order order, String presignedImageUrl, String presignedDetailUrl) {
-    return GetOrderResponse.builder()
+  public static AdminGetOrderResponse from(Order order, String presignedImageUrl, String presignedDetailUrl) {
+    return AdminGetOrderResponse.builder()
         .orderId(order.getId())
+        .customerId(order.getCustomer().getId())
+        .customerName(order.getCustomer().getName())
         .clothesId(order.getClothes().getId())
         .imageUrl(presignedImageUrl)
         .detailUrl(presignedDetailUrl)

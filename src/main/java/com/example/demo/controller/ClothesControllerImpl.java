@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.clothes.dto.request.UpdateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
-import com.example.demo.clothes.dto.response.GetClothesObject;
+import com.example.demo.clothes.dto.response.GetClothesFile;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.ClothesCategory;
 import com.example.demo.clothes.service.ClothesService;
@@ -85,19 +85,35 @@ public class ClothesControllerImpl implements ClothesController {
 	}
 
 	@Override
-	@GetMapping("/download/{clothesId}")
+	@GetMapping("/download/{clothesId}/obj")
 	public ResponseEntity<byte[]> getClothesObject(@PathVariable Long clothesId) {
-		GetClothesObject getClothesObject = clothesService.getClothesObject(clothesId);
+		GetClothesFile getClothesFile = clothesService.getClothesObject(clothesId);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		headers.setContentDisposition(ContentDisposition.builder("attachment")
-			.filename(getClothesObject.fileName())
+			.filename(getClothesFile.fileName())
 			.build());
 
 		return ResponseEntity.ok()
 			.headers(headers)
-			.contentLength(getClothesObject.file().length)
-			.body(getClothesObject.file());
+			.contentLength(getClothesFile.file().length)
+			.body(getClothesFile.file());
+	}
+
+	@Override
+	@GetMapping("/download/{clothesId}/mtl")
+	public ResponseEntity<byte[]> getClothesMtlFile(@PathVariable Long clothesId) {
+		GetClothesFile getClothesFile = clothesService.getClothesMtl(clothesId);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headers.setContentDisposition(ContentDisposition.builder("attachment")
+			.filename(getClothesFile.fileName())
+			.build());
+
+		return ResponseEntity.ok()
+			.headers(headers)
+			.contentLength(getClothesFile.file().length)
+			.body(getClothesFile.file());
 	}
 
 	@Override

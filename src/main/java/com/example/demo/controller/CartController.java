@@ -1,4 +1,4 @@
-package com.example.demo.cart.controller;
+package com.example.demo.controller;
 
 import com.example.demo.cart.dto.request.AddToCartItemRequest;
 import com.example.demo.cart.dto.request.UpdateCartItemRequest;
