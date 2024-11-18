@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.clothes.dto.request.CreateClothesRequest;
+import com.example.demo.clothes.dto.request.UpdateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
@@ -49,6 +50,7 @@ class ClothesServiceTest {
 	private S3Service s3Service;
 
 	private Clothes testClothes;
+	private ClothesSize testClothesSize;
 	private MultipartFile testFile;
 
 	@BeforeEach
@@ -63,6 +65,12 @@ class ClothesServiceTest {
 			.detailUrl("test-detail.jpg")
 			.objectKey("test-object.obj")
 			.mtlKey("test.mtl")
+			.build();
+
+		testClothesSize = ClothesSize.builder()
+			.clothes(testClothes)
+			.size(Size.M)
+			.quantity(10)
 			.build();
 
 		testFile = new MockMultipartFile(
@@ -171,5 +179,38 @@ class ClothesServiceTest {
 		// then
 		verify(clothesRepository).save(any(Clothes.class));
 		verify(clothesSizeRepository).save(any(ClothesSize.class));
+	}
+
+	@Test
+	@DisplayName("상품 업데이트 테스트")
+	void updateProduct_Success() {
+		// given
+		UpdateClothesRequest request = new UpdateClothesRequest(
+			ClothesCategory.TOPS,
+			"Updated Test Clothes",
+			15000,
+			GenderCategory.UNISEX,
+			"TEST002",
+			10,
+			Size.M,
+			20,  // quantity
+			testFile, // mainImage
+			testFile, // detailImage
+			testFile, // objectFile
+			testFile, // objectFemaleFile
+			testFile  // mtlFile
+		);
+
+		when(clothesRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(testClothes));
+		when(clothesSizeRepository.findByClothesAndSize(any(Clothes.class), any(Size.class)))
+			.thenReturn(Optional.of(testClothesSize));
+		when(s3Service.uploadFile(any(MultipartFile.class), anyString())).thenReturn("updated-file-url");
+
+		// when
+		assertDoesNotThrow(() -> clothesService.updateProduct(1L, request));
+
+		// then
+		verify(s3Service, times(5)).uploadFile(any(MultipartFile.class), anyString());
+		verify(clothesSizeRepository).findByClothesAndSize(any(Clothes.class), eq(Size.M));
 	}
 }
