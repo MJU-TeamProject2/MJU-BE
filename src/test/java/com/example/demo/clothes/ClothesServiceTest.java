@@ -17,12 +17,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.clothes.dto.request.CreateClothesRequest;
 import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.entity.ClothesCategory;
+import com.example.demo.clothes.entity.ClothesSize;
+import com.example.demo.clothes.entity.GenderCategory;
+import com.example.demo.clothes.entity.Size;
 import com.example.demo.clothes.repository.ClothesRepository;
+import com.example.demo.clothes.repository.ClothesSizeRepository;
 import com.example.demo.clothes.service.ClothesService;
 import com.example.demo.common.dto.PageResponse;
 import com.example.demo.common.util.S3Service;
@@ -37,9 +44,12 @@ class ClothesServiceTest {
 	@Mock
 	private ClothesRepository clothesRepository;
 	@Mock
+	private ClothesSizeRepository clothesSizeRepository;
+	@Mock
 	private S3Service s3Service;
 
 	private Clothes testClothes;
+	private MultipartFile testFile;
 
 	@BeforeEach
 	void setUp() {
@@ -54,6 +64,13 @@ class ClothesServiceTest {
 			.objectKey("test-object.obj")
 			.mtlKey("test.mtl")
 			.build();
+
+		testFile = new MockMultipartFile(
+			"test-file",
+			"test.jpg",
+			"image/jpeg",
+			"test image content".getBytes()
+		);
 	}
 
 	@Test
@@ -123,5 +140,36 @@ class ClothesServiceTest {
 		assertEquals(1, response.total());
 		assertEquals(ClothesCategory.TOPS, testClothes.getCategory());
 		assertEquals("Test Clothes", response.content().get(0).name());
+	}
+
+	@Test
+	@DisplayName("상품 생성 테스트")
+	void createProduct_Success() {
+		// given
+		CreateClothesRequest request = new CreateClothesRequest(
+			ClothesCategory.TOPS,
+			"Test Clothes",
+			10000,
+			GenderCategory.MALE,
+			"TEST001",
+			0,
+			Size.M,
+			100,
+			testFile, // mainImage
+			testFile, // detailImage
+			testFile, // objectFile
+			testFile, // objectFemaleFile
+			testFile // mtlFile
+		);
+
+		when(s3Service.uploadFile(any(MultipartFile.class), anyString())).thenReturn("uploaded-file-url");
+		when(clothesRepository.save(any(Clothes.class))).thenReturn(testClothes);
+
+		// when
+		assertDoesNotThrow(() -> clothesService.createProduct(request));
+
+		// then
+		verify(clothesRepository).save(any(Clothes.class));
+		verify(clothesSizeRepository).save(any(ClothesSize.class));
 	}
 }
