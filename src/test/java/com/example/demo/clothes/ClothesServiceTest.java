@@ -101,4 +101,27 @@ class ClothesServiceTest {
 		// when & then
 		assertThrows(ClothesNotFoundException.class, () -> clothesService.getClothesDetail(999L));
 	}
+
+	@Test
+	@DisplayName("카테고리별 옷 목록 조회 테스트")
+	void getClothesByCategory_Success() {
+		// given
+		PageRequest pageRequest = PageRequest.of(0, 10);
+		List<Clothes> clothesList = List.of(testClothes);
+		Page<Clothes> clothesPage = new PageImpl<>(clothesList);
+
+		when(clothesRepository.findByCategoryAndDeletedAtIsNull(pageRequest, ClothesCategory.TOPS))
+			.thenReturn(clothesPage);
+		when(s3Service.generatePresignedUrl(anyString())).thenReturn("presigned-url");
+
+		// when
+		PageResponse<GetClothesResponse> response = clothesService.getClothesByCategory(pageRequest,
+			ClothesCategory.TOPS);
+
+		// then
+		assertNotNull(response);
+		assertEquals(1, response.total());
+		assertEquals(ClothesCategory.TOPS, testClothes.getCategory());
+		assertEquals("Test Clothes", response.content().get(0).name());
+	}
 }
