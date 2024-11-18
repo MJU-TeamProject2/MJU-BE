@@ -275,4 +275,14 @@ class ClothesServiceTest {
 		assertEquals(testClothes.getId(), found.getId());
 		assertEquals(testClothes.getName(), found.getName());
 	}
+
+	@Test
+	@DisplayName("ID로 옷 찾기 실패 - 존재하지 않는 상품")
+	void findById_NotFound() {
+		// given
+		when(clothesRepository.findByIdAndDeletedAtIsNull(999L)).thenReturn(Optional.empty());
+
+		// when & then
+		assertThrows(ClothesNotFoundException.class, () -> clothesService.findById(999L));
+	}
 }
