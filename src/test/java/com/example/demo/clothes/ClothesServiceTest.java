@@ -26,6 +26,7 @@ import com.example.demo.clothes.repository.ClothesRepository;
 import com.example.demo.clothes.service.ClothesService;
 import com.example.demo.common.dto.PageResponse;
 import com.example.demo.common.util.S3Service;
+import com.example.demo.exception.ClothesNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class ClothesServiceTest {
@@ -91,4 +92,13 @@ class ClothesServiceTest {
 		assertEquals("presigned-url", response.imageUrl());
 	}
 
+	@Test
+	@DisplayName("옷 상세 정보 조회 실패 - 존재하지 않는 상품")
+	void getClothesDetail_NotFound() {
+		// given
+		when(clothesRepository.findByIdAndDeletedAtIsNull(999L)).thenReturn(Optional.empty());
+
+		// when & then
+		assertThrows(ClothesNotFoundException.class, () -> clothesService.getClothesDetail(999L));
+	}
 }
