@@ -227,4 +227,37 @@ class ClothesServiceTest {
 		verify(s3Service).fileDeletes(anyList());
 		assertNotNull(testClothes.getDeletedAt());
 	}
+
+	@Test
+	@DisplayName("Object 파일 조회 테스트")
+	void getClothesObject_Success() {
+		// given
+		when(clothesRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(testClothes));
+		when(s3Service.getObject(anyString())).thenReturn("test content".getBytes());
+
+		// when
+		var response = clothesService.getClothesObject(1L);
+
+		// then
+		assertNotNull(response);
+		assertEquals(1L, response.clothesId());
+		assertNotNull(response.file());
+	}
+
+	@Test
+	@DisplayName("MTL 파일 조회 테스트")
+	void getClothesMtl_Success() {
+		// given
+		when(clothesRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(testClothes));
+		when(s3Service.getObject(anyString())).thenReturn("test mtl content".getBytes());
+
+		// when
+		var response = clothesService.getClothesMtl(1L);
+
+		// then
+		assertNotNull(response);
+		assertEquals(1L, response.clothesId());
+		assertNotNull(response.file());
+		assertTrue(response.fileName().endsWith(".mtl"));
+	}
 }
