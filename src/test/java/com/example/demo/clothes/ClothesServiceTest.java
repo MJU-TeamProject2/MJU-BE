@@ -213,4 +213,18 @@ class ClothesServiceTest {
 		verify(s3Service, times(5)).uploadFile(any(MultipartFile.class), anyString());
 		verify(clothesSizeRepository).findByClothesAndSize(any(Clothes.class), eq(Size.M));
 	}
+
+	@Test
+	@DisplayName("상품 삭제 테스트")
+	void deleteProduct_Success() {
+		// given
+		when(clothesRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(testClothes));
+
+		// when
+		clothesService.deleteProduct(1L);
+
+		// then
+		verify(s3Service).fileDeletes(anyList());
+		assertNotNull(testClothes.getDeletedAt());
+	}
 }
