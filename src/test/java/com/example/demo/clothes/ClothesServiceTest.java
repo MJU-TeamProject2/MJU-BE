@@ -260,4 +260,19 @@ class ClothesServiceTest {
 		assertNotNull(response.file());
 		assertTrue(response.fileName().endsWith(".mtl"));
 	}
+
+	@Test
+	@DisplayName("ID로 옷 찾기 테스트")
+	void findById_Success() {
+		// given
+		when(clothesRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(testClothes));
+
+		// when
+		Clothes found = clothesService.findById(1L);
+
+		// then
+		assertNotNull(found);
+		assertEquals(testClothes.getId(), found.getId());
+		assertEquals(testClothes.getName(), found.getName());
+	}
 }
