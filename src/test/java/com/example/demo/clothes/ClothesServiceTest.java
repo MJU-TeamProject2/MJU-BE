@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import com.example.demo.clothes.dto.response.GetClothesDetailResponse;
 import com.example.demo.clothes.dto.response.GetClothesResponse;
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.entity.ClothesCategory;
@@ -71,6 +73,22 @@ class ClothesServiceTest {
 		assertNotNull(response);
 		assertEquals(1, response.total());
 		assertEquals("Test Clothes", response.content().get(0).name());
+	}
+
+	@Test
+	@DisplayName("옷 상세 정보 조회 테스트")
+	void getClothesDetail_Success() {
+		// given
+		when(clothesRepository.findByIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(testClothes));
+		when(s3Service.generatePresignedUrl(anyString())).thenReturn("presigned-url");
+
+		// when
+		GetClothesDetailResponse response = clothesService.getClothesDetail(1L);
+
+		// then
+		assertNotNull(response);
+		assertEquals("Test Clothes", response.name());
+		assertEquals("presigned-url", response.imageUrl());
 	}
 
 }
