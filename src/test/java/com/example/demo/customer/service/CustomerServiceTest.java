@@ -196,4 +196,14 @@ class CustomerServiceTest {
 		verify(s3Service).generatePresignedUrl(URL_KEY + customer.getGender() + customer.getBodyType() + EXTENSION);
 	}
 
+	@Test
+	@DisplayName("프로필 조회 실패 테스트 - 존재하지 않는 사용자")
+	void 프로필_조회_실패() {
+		// Given
+		when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.empty());
+
+		// When & Then
+		assertThrows(CustomException.class, () -> customerService.retrieveProfile(CUSTOMER_ID));
+		verify(customerRepository).findById(CUSTOMER_ID);
+	}
 }
