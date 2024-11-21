@@ -17,6 +17,7 @@ import com.example.demo.clothes.entity.ClothesCategory;
 import com.example.demo.clothes.entity.ClothesSize;
 import com.example.demo.clothes.entity.Size;
 import com.example.demo.clothes.repository.ClothesSizeRepository;
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.util.TestResultLogger;
 
 import lombok.extern.slf4j.Slf4j;
@@ -76,34 +77,30 @@ class ClothesSizeServiceTest {
 	@Test
 	@DisplayName("특정 의류와 사이즈로 ClothesSize 찾기 - 존재하는 경우")
 	void 사이즈별_의상_조회_성공() {
-		// given
+		// Given
 		given(clothesSizeRepository.findByClothesAndSize(testClothes, Size.M))
 			.willReturn(Optional.of(testClothesSize));
 
-		// when
+		// When
 		ClothesSize result = clothesSizeService.findByClothesIdAndSize(testClothes, Size.M);
 
-		// Then: 결과 검증
+		// Then
 		then(clothesSizeRepository).should().findByClothesAndSize(testClothes, Size.M);
 		assertNotNull(result);
 		assertEquals(testClothesSize, result);
 	}
 
-	// @Test
-	// @DisplayName("특정 의류와 사이즈로 ClothesSize 찾기 - 존재하지 않는 경우")
-	// void findByClothesIdAndSize_WhenNotExists_ShouldThrowNotFoundException() {
-	// 	// Given: 의류와 사이즈 준비
-	// 	Clothes clothes = new Clothes();
-	// 	Size size = Size.MEDIUM;
-	//
-	// 	// Mock 객체 동작 정의
-	// 	given(clothesSizeRepository.findByClothesAndSize(clothes, size))
-	// 		.willReturn(Optional.empty());
-	//
-	// 	// When & Then: 예외 발생 검증
-	// 	assertThrows(ClothesSizeNotFoundException.class,
-	// 		() -> clothesSizeService.findByClothesIdAndSize(clothes, size));
-	// }
+	@Test
+	@DisplayName("특정 의류와 사이즈로 ClothesSize 찾기 - 존재하지 않는 경우")
+	void 사이즈별_의상_조회_실패() {
+		// Given
+		given(clothesSizeRepository.findByClothesAndSize(testClothes, Size.L))
+			.willReturn(Optional.empty());
+
+		// When & Then
+		assertThrows(CustomException.class,
+			() -> clothesSizeService.findByClothesIdAndSize(testClothes, Size.L));
+	}
 	//
 	// @Test
 	// @DisplayName("의류 수량 업데이트 - 유효한 수량")
