@@ -43,6 +43,8 @@ class ClothesSizeServiceTest {
 	private final static String OBJECT_KEY = "test-object.obj";
 	private final static String MTL_KEY = "test.mtl";
 	private final static int QUANTITY = 10;
+	private final static int SUCCESS_QUANTITY = 5;
+	private final static int FAIL_QUANTITY = -1;
 
 	@BeforeEach
 	void setUp() {
@@ -101,24 +103,17 @@ class ClothesSizeServiceTest {
 		assertThrows(CustomException.class,
 			() -> clothesSizeService.findByClothesIdAndSize(testClothes, Size.L));
 	}
-	//
-	// @Test
-	// @DisplayName("의류 수량 업데이트 - 유효한 수량")
-	// void updateClothesQuantity_WithValidQuantity_ShouldUpdateSuccessfully() {
-	// 	// Given: 의류 사이즈와 새로운 수량 준비
-	// 	Clothes clothes = new Clothes();
-	// 	Size size = Size.MEDIUM;
-	// 	int initialQuantity = 10;
-	// 	int newQuantity = 5;
-	// 	ClothesSize clothesSize = new ClothesSize(clothes, size, initialQuantity);
-	//
-	// 	// When: 수량 업데이트 메서드 호출
-	// 	clothesSizeService.updateClothesQuantity(clothesSize, newQuantity);
-	//
-	// 	// Then: 결과 검증
-	// 	assertEquals(newQuantity, clothesSize.getQuantity());
-	// 	then(clothesSizeRepository).should().save(clothesSize);
-	// }
+
+	@Test
+	@DisplayName("의류 수량 업데이트 - 유효한 수량")
+	void 유효한_의상_수량_수정_성공() {
+		// Given & When
+		clothesSizeService.updateClothesQuantity(testClothesSize, SUCCESS_QUANTITY);
+
+		// Then
+		assertEquals(SUCCESS_QUANTITY, testClothesSize.getQuantity());
+		then(clothesSizeRepository).should().save(testClothesSize);
+	}
 	//
 	// @Test
 	// @DisplayName("의류 수량 업데이트 - 음수 수량")
