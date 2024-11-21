@@ -20,6 +20,7 @@ import com.example.demo.common.security.TokenProvider;
 import com.example.demo.common.util.S3Service;
 import com.example.demo.common.util.auth.Auth;
 import com.example.demo.common.util.auth.AuthService;
+import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.BodyType;
 import com.example.demo.customer.entity.Customer;
@@ -32,22 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @ExtendWith({MockitoExtension.class, TestResultLogger.class})
 @Slf4j
 class CustomerServiceTest {
-
-	@InjectMocks
-	private CustomerService customerService;
-
-	@Mock
-	private CustomerRepository customerRepository;
-	@Mock
-	private PasswordEncoder passwordEncoder;
-	@Mock
-	private TokenProvider tokenProvider;
-	@Mock
-	private AuthService authService;
-	@Mock
-	private S3Service s3Service;
-
-	private Customer customer;
 
 	private static final String EMAIL = "test@test.com";
 	private static final String NOT_REGISTED_EMAIL = "nonexistent@test.com";
@@ -64,6 +49,21 @@ class CustomerServiceTest {
 	private static final String EXPECTED_BODY_OBJECT_URL = "https://s3-bucket.com/object/MALE_RECTANGLE.obj";
 	private static final String URL_KEY = "object/";
 	private static final String EXTENSION = ".obj";
+	private static final Long CUSTOMER_ID = 1L;
+
+	@InjectMocks
+	private CustomerService customerService;
+	@Mock
+	private CustomerRepository customerRepository;
+	@Mock
+	private PasswordEncoder passwordEncoder;
+	@Mock
+	private TokenProvider tokenProvider;
+	@Mock
+	private AuthService authService;
+	@Mock
+	private S3Service s3Service;
+	private Customer customer;
 
 	// 테스트용 Auth 객체 생성 헬퍼 메소드
 	private Auth createTestAuth(String refreshToken) {
@@ -77,15 +77,15 @@ class CustomerServiceTest {
 	@BeforeEach
 	void setUp() {
 		customer = Customer.builder()
-				.email(EMAIL)
-				.password(passwordEncoder.encode(PASSWORD))
-				.name(NAME)
-				.nickName(NICK_NAME)
-				.age(AGE)
-				.gender(GENDER)
-				.phoneNumber(PHONE_NUMBER)
-				.bodyType(BODY_TYPE)
-				.build();
+			.email(EMAIL)
+			.password(passwordEncoder.encode(PASSWORD))
+			.name(NAME)
+			.nickName(NICK_NAME)
+			.age(AGE)
+			.gender(GENDER)
+			.phoneNumber(PHONE_NUMBER)
+			.bodyType(BODY_TYPE)
+			.build();
 	}
 
 	@Test
@@ -152,7 +152,7 @@ class CustomerServiceTest {
 
 	@Test
 	@DisplayName("로그인 실패 테스트 - 사용자를 찾을 수 없음")
-	void login_UserNotFound() {
+	void 로그인_실패_사용자_찾지_못함() {
 		// Given
 		when(customerRepository.findByEmail(NOT_REGISTED_EMAIL)).thenReturn(Optional.empty());
 
@@ -163,7 +163,7 @@ class CustomerServiceTest {
 
 	@Test
 	@DisplayName("로그인 실패 테스트 - 잘못된 비밀번호")
-	void login_WrongPassword() {
+	void 로그인_실패_비밀번호_틀림() {
 		// Given
 		when(customerRepository.findByEmail(EMAIL)).thenReturn(Optional.of(customer));
 		when(passwordEncoder.matches(NOT_REGISTED_PASSWORD, customer.getPassword())).thenReturn(false);
@@ -171,6 +171,29 @@ class CustomerServiceTest {
 		// When & Then
 		assertThrows(CustomException.class,
 			() -> customerService.login(EMAIL, NOT_REGISTED_PASSWORD));
+	}
+
+	@Test
+	@DisplayName("프로필 조회 성공 테스트")
+	void 프로필_조회_성공() {
+		// Given
+		when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(customer));
+		when(s3Service.generatePresignedUrl(URL_KEY + customer.getGender() + customer.getBodyType() + EXTENSION))
+			.thenReturn(EXPECTED_BODY_OBJECT_URL);
+
+		// When
+		GetCustomerResponse response = customerService.retrieveProfile(CUSTOMER_ID);
+
+		// Then
+		assertNotNull(response);
+		assertEquals(EMAIL, response.email());
+		assertEquals(NAME, response.name());
+		assertEquals(NICK_NAME, response.nickName());
+		assertEquals(AGE, response.age());
+		assertEquals(PHONE_NUMBER, response.phoneNumber());
+		assertEquals(EXPECTED_BODY_OBJECT_URL, response.bodyObjUrl());
+		verify(customerRepository).findById(CUSTOMER_ID);
+		verify(s3Service).generatePresignedUrl(URL_KEY + customer.getGender() + customer.getBodyType() + EXTENSION);
 	}
 
 }
