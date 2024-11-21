@@ -20,6 +20,7 @@ import com.example.demo.common.security.TokenProvider;
 import com.example.demo.common.util.S3Service;
 import com.example.demo.common.util.auth.Auth;
 import com.example.demo.common.util.auth.AuthService;
+import com.example.demo.customer.dto.request.ProfileUpdateRequest;
 import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.BodyType;
@@ -50,6 +51,13 @@ class CustomerServiceTest {
 	private static final String URL_KEY = "object/";
 	private static final String EXTENSION = ".obj";
 	private static final Long CUSTOMER_ID = 1L;
+	private static final int UPDATED_AGE = 30;
+	private static final String UPDATED_EMAIL = "updated@test.com";
+	private static final String UPDATED_NAME = "Updated Customer";
+	private static final String UPDATED_NICK_NAME = "Updated Nick";
+	private static final String UPDATED_PHONE_NUMBER = "010-9876-5432";
+	private static final int UPDATED_WEIGHT = 72;
+	private static final int UPDATED_HEIGHT = 176;
 
 	@InjectMocks
 	private CustomerService customerService;
@@ -205,5 +213,38 @@ class CustomerServiceTest {
 		// When & Then
 		assertThrows(CustomException.class, () -> customerService.retrieveProfile(CUSTOMER_ID));
 		verify(customerRepository).findById(CUSTOMER_ID);
+	}
+
+	@Test
+	@DisplayName("프로필 업데이트 성공 테스트")
+	void 프로필_업데이트_성공() {
+		// Given
+		ProfileUpdateRequest request = new ProfileUpdateRequest(
+			UPDATED_NAME,
+			UPDATED_NICK_NAME,
+			UPDATED_AGE,
+			UPDATED_EMAIL,
+			UPDATED_PHONE_NUMBER,
+			UPDATED_HEIGHT,
+			UPDATED_WEIGHT,
+			BODY_TYPE
+		);
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		doNothing().when(authService).update(EMAIL, UPDATED_EMAIL);
+
+		// When
+		customerService.updateProfile(CUSTOMER_ID, request);
+
+		// Then
+		assertEquals(UPDATED_EMAIL, customer.getEmail());
+		assertEquals(UPDATED_NAME, customer.getName());
+		assertEquals(UPDATED_NICK_NAME, customer.getNickName());
+		assertEquals(UPDATED_AGE, customer.getAge());
+		assertEquals(UPDATED_PHONE_NUMBER, customer.getPhoneNumber());
+		assertEquals(UPDATED_WEIGHT, customer.getWeight());
+		assertEquals(UPDATED_HEIGHT, customer.getHeight());
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(authService).update(EMAIL, UPDATED_EMAIL);
 	}
 }
