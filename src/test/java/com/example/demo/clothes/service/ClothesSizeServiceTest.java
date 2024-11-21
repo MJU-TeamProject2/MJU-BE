@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.clothes.entity.Clothes;
 import com.example.demo.clothes.entity.ClothesCategory;
@@ -33,36 +31,46 @@ class ClothesSizeServiceTest {
 	private ClothesSizeService clothesSizeService;
 	private Clothes testClothes;
 	private ClothesSize testClothesSize;
-	private MultipartFile testFile;
+	// private MultipartFile testFile;
+
+	private final static long ID = 1L;
+	private final static String IMAGE_URL = "test-image.jpg";
+	private final static String NAME = "Test Clothes";
+	private final static int PRICE = 10000;
+	private final static String PRODUCT_NUMBER = "TEST001";
+	private final static String DETAIL_URL = "test-detail.jpg";
+	private final static String OBJECT_KEY = "test-object.obj";
+	private final static String MTL_KEY = "test.mtl";
+	private final static int QUANTITY = 10;
 
 	@BeforeEach
 	void setUp() {
 		clothesSizeService = new ClothesSizeService(clothesSizeRepository);
 
 		testClothes = Clothes.builder()
-			.id(1L)
+			.id(ID)
 			.category(ClothesCategory.TOPS)
-			.imageUrl("test-image.jpg")
-			.name("Test Clothes")
-			.price(10000)
-			.productNumber("TEST001")
-			.detailUrl("test-detail.jpg")
-			.objectKey("test-object.obj")
-			.mtlKey("test.mtl")
+			.imageUrl(IMAGE_URL)
+			.name(NAME)
+			.price(PRICE)
+			.productNumber(PRODUCT_NUMBER)
+			.detailUrl(DETAIL_URL)
+			.objectKey(OBJECT_KEY)
+			.mtlKey(MTL_KEY)
 			.build();
 
 		testClothesSize = ClothesSize.builder()
 			.clothes(testClothes)
 			.size(Size.M)
-			.quantity(10)
+			.quantity(QUANTITY)
 			.build();
 
-		testFile = new MockMultipartFile(
-			"test-file",
-			"test.jpg",
-			"image/jpeg",
-			"test image content".getBytes()
-		);
+		// testFile = new MockMultipartFile(
+		// 	"test-file",
+		// 	"test.jpg",
+		// 	"image/jpeg",
+		// 	"test image content".getBytes()
+		// );
 	}
 
 	@Test
