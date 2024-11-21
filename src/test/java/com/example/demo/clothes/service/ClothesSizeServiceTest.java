@@ -32,7 +32,6 @@ class ClothesSizeServiceTest {
 	private ClothesSizeService clothesSizeService;
 	private Clothes testClothes;
 	private ClothesSize testClothesSize;
-	// private MultipartFile testFile;
 
 	private final static long ID = 1L;
 	private final static String IMAGE_URL = "test-image.jpg";
@@ -67,18 +66,11 @@ class ClothesSizeServiceTest {
 			.size(Size.M)
 			.quantity(QUANTITY)
 			.build();
-
-		// testFile = new MockMultipartFile(
-		// 	"test-file",
-		// 	"test.jpg",
-		// 	"image/jpeg",
-		// 	"test image content".getBytes()
-		// );
 	}
 
 	@Test
 	@DisplayName("특정 의류와 사이즈로 ClothesSize 찾기 - 존재하는 경우")
-	void 사이즈별_의상_조회_성공() {
+	void 사이즈별_의상조회_성공() {
 		// Given
 		given(clothesSizeRepository.findByClothesAndSize(testClothes, Size.M))
 			.willReturn(Optional.of(testClothesSize));
@@ -94,7 +86,7 @@ class ClothesSizeServiceTest {
 
 	@Test
 	@DisplayName("특정 의류와 사이즈로 ClothesSize 찾기 - 존재하지 않는 경우")
-	void 사이즈별_의상_조회_실패() {
+	void 사이즈별_의상조회_실패() {
 		// Given
 		given(clothesSizeRepository.findByClothesAndSize(testClothes, Size.L))
 			.willReturn(Optional.empty());
@@ -106,7 +98,7 @@ class ClothesSizeServiceTest {
 
 	@Test
 	@DisplayName("의류 수량 업데이트 - 유효한 수량")
-	void 유효한_의상_수량_수정_성공() {
+	void 유효한_의상수량_수정_성공() {
 		// Given & When
 		clothesSizeService.updateClothesQuantity(testClothesSize, SUCCESS_QUANTITY);
 
@@ -114,19 +106,13 @@ class ClothesSizeServiceTest {
 		assertEquals(SUCCESS_QUANTITY, testClothesSize.getQuantity());
 		then(clothesSizeRepository).should().save(testClothesSize);
 	}
-	//
-	// @Test
-	// @DisplayName("의류 수량 업데이트 - 음수 수량")
-	// void updateClothesQuantity_WithNegativeQuantity_ShouldThrowException() {
-	// 	// Given: 의류 사이즈와 음수 수량 준비
-	// 	Clothes clothes = new Clothes();
-	// 	Size size = Size.MEDIUM;
-	// 	int initialQuantity = 10;
-	// 	int negativeQuantity = -1;
-	// 	ClothesSize clothesSize = new ClothesSize(clothes, size, initialQuantity);
-	//
-	// 	// When & Then: 예외 발생 검증
-	// 	assertThrows(ClothesInsufficientStockException.class,
-	// 		() -> clothesSizeService.updateClothesQuantity(clothesSize, negativeQuantity));
-	// }
+
+	@Test
+	@DisplayName("의류 수량 업데이트 - 음수 수량")
+	void 음수_의상수량_수정_실패() {
+		// Given
+		// When & Then
+		assertThrows(CustomException.class,
+			() -> clothesSizeService.updateClothesQuantity(testClothesSize, FAIL_QUANTITY));
+	}
 }
