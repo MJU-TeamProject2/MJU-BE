@@ -49,6 +49,62 @@ dependencies {
 
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    // 제외할 파일들 지정
+                    "**/common/**",
+                    "**/dto/**",
+                    "**/entity/**",
+                    "**/controller/**",
+                    "**/repository/**",
+                    "**/config/**",
+                    "**/util/**",
+                    "**/exception/**",
+                    "**/application/**",
+                    "**/*Application.class"
+            ])
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            // 'element'가 없으면 프로젝트의 전체 코드를 검사
+            element = 'CLASS'
+
+            // 라인 커버리지 제한을 80%로 설정
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            // 브랜치 커버리지 제한을 80%로 설정
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+
+            // 서비스 패키지만 포함
+            includes = ['com.example.project.service.*']
+        }
+    }
+}
+
+test.finalizedBy jacocoTestCoverageVerification
