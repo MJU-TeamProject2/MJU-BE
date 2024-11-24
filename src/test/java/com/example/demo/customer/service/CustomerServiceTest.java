@@ -247,4 +247,23 @@ class CustomerServiceTest {
 		verify(customerRepository).getReferenceById(CUSTOMER_ID);
 		verify(authService).update(EMAIL, UPDATED_EMAIL);
 	}
+
+	@Test
+	@DisplayName("ID로 고객 조회 성공 테스트")
+	void id로_고객_조회_성공() {
+		// Given
+		when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(customer));
+
+		// When
+		Customer foundCustomer = customerService.findById(CUSTOMER_ID);
+
+		// Then
+		assertNotNull(foundCustomer);
+		assertEquals(EMAIL, foundCustomer.getEmail());
+		assertEquals(NAME, foundCustomer.getName());
+		assertEquals(NICK_NAME, foundCustomer.getNickName());
+		assertEquals(AGE, foundCustomer.getAge());
+		assertEquals(PHONE_NUMBER, foundCustomer.getPhoneNumber());
+		verify(customerRepository).findById(CUSTOMER_ID);
+	}
 }
