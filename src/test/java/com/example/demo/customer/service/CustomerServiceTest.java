@@ -266,4 +266,15 @@ class CustomerServiceTest {
 		assertEquals(PHONE_NUMBER, foundCustomer.getPhoneNumber());
 		verify(customerRepository).findById(CUSTOMER_ID);
 	}
+
+	@Test
+	@DisplayName("ID로 고객 조회 실패 테스트 - 존재하지 않는 사용자")
+	void id로_고객_조회_실패() {
+		// Given
+		when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.empty());
+
+		// When & Then
+		assertThrows(CustomException.class, () -> customerService.findById(CUSTOMER_ID));
+		verify(customerRepository).findById(CUSTOMER_ID);
+	}
 }
