@@ -11,9 +11,11 @@ import com.example.demo.clothes.entity.ClothesCategory;
 import com.example.demo.clothes.entity.GenderCategory;
 import com.example.demo.customer.entity.BodyType;
 import com.example.demo.customer.entity.Gender;
+import com.example.demo.util.TestResultLogger;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +32,8 @@ import com.example.demo.cart.exception.CartNotFoundException;
 import com.example.demo.exception.ClothesInsufficientStockException;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, TestResultLogger.class})
+@Slf4j
 class CartServiceTest {
 
   @InjectMocks

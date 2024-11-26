@@ -11,8 +11,10 @@ import com.example.demo.clothes.entity.GenderCategory;
 import com.example.demo.clothes.entity.Size;
 import com.example.demo.customer.entity.BodyType;
 import com.example.demo.customer.entity.Gender;
+import com.example.demo.util.TestResultLogger;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +36,8 @@ import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.service.CustomerService;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, TestResultLogger.class})
+@Slf4j
 class CartApplicationServiceTest {
 
   @InjectMocks
