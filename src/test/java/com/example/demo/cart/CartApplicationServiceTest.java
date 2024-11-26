@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -30,9 +32,12 @@ import com.example.demo.clothes.service.ClothesSizeService;
 import com.example.demo.common.util.S3Service;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.service.CustomerService;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class CartApplicationServiceTest {
 
+  @InjectMocks
   private CartApplicationService cartApplicationService;
 
   @Mock

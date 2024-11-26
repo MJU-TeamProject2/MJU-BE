@@ -16,6 +16,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -26,9 +28,12 @@ import com.example.demo.clothes.entity.ClothesSize;
 import com.example.demo.customer.entity.Customer;
 import com.example.demo.cart.exception.CartNotFoundException;
 import com.example.demo.exception.ClothesInsufficientStockException;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class CartServiceTest {
 
+  @InjectMocks
   private CartService cartService;
 
   @Mock
