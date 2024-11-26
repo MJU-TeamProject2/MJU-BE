@@ -20,6 +20,8 @@ import com.example.demo.common.security.TokenProvider;
 import com.example.demo.common.util.S3Service;
 import com.example.demo.common.util.auth.Auth;
 import com.example.demo.common.util.auth.AuthService;
+import com.example.demo.customer.dto.request.ProfileUpdateRequest;
+import com.example.demo.customer.dto.response.GetCustomerResponse;
 import com.example.demo.customer.dto.response.LoginResponse;
 import com.example.demo.customer.entity.BodyType;
 import com.example.demo.customer.entity.Customer;
@@ -32,22 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 @ExtendWith({MockitoExtension.class, TestResultLogger.class})
 @Slf4j
 class CustomerServiceTest {
-
-	@InjectMocks
-	private CustomerService customerService;
-
-	@Mock
-	private CustomerRepository customerRepository;
-	@Mock
-	private PasswordEncoder passwordEncoder;
-	@Mock
-	private TokenProvider tokenProvider;
-	@Mock
-	private AuthService authService;
-	@Mock
-	private S3Service s3Service;
-
-	private Customer customer;
 
 	private static final String EMAIL = "test@test.com";
 	private static final String NOT_REGISTED_EMAIL = "nonexistent@test.com";
@@ -64,6 +50,28 @@ class CustomerServiceTest {
 	private static final String EXPECTED_BODY_OBJECT_URL = "https://s3-bucket.com/object/MALE_RECTANGLE.obj";
 	private static final String URL_KEY = "object/";
 	private static final String EXTENSION = ".obj";
+	private static final Long CUSTOMER_ID = 1L;
+	private static final int UPDATED_AGE = 30;
+	private static final String UPDATED_EMAIL = "updated@test.com";
+	private static final String UPDATED_NAME = "Updated Customer";
+	private static final String UPDATED_NICK_NAME = "Updated Nick";
+	private static final String UPDATED_PHONE_NUMBER = "010-9876-5432";
+	private static final int UPDATED_WEIGHT = 72;
+	private static final int UPDATED_HEIGHT = 176;
+
+	@InjectMocks
+	private CustomerService customerService;
+	@Mock
+	private CustomerRepository customerRepository;
+	@Mock
+	private PasswordEncoder passwordEncoder;
+	@Mock
+	private TokenProvider tokenProvider;
+	@Mock
+	private AuthService authService;
+	@Mock
+	private S3Service s3Service;
+	private Customer customer;
 
 	// 테스트용 Auth 객체 생성 헬퍼 메소드
 	private Auth createTestAuth(String refreshToken) {
@@ -77,15 +85,15 @@ class CustomerServiceTest {
 	@BeforeEach
 	void setUp() {
 		customer = Customer.builder()
-				.email(EMAIL)
-				.password(passwordEncoder.encode(PASSWORD))
-				.name(NAME)
-				.nickName(NICK_NAME)
-				.age(AGE)
-				.gender(GENDER)
-				.phoneNumber(PHONE_NUMBER)
-				.bodyType(BODY_TYPE)
-				.build();
+			.email(EMAIL)
+			.password(passwordEncoder.encode(PASSWORD))
+			.name(NAME)
+			.nickName(NICK_NAME)
+			.age(AGE)
+			.gender(GENDER)
+			.phoneNumber(PHONE_NUMBER)
+			.bodyType(BODY_TYPE)
+			.build();
 	}
 
 	@Test
@@ -152,7 +160,7 @@ class CustomerServiceTest {
 
 	@Test
 	@DisplayName("로그인 실패 테스트 - 사용자를 찾을 수 없음")
-	void login_UserNotFound() {
+	void 로그인_실패_사용자_찾지_못함() {
 		// Given
 		when(customerRepository.findByEmail(NOT_REGISTED_EMAIL)).thenReturn(Optional.empty());
 
@@ -163,7 +171,7 @@ class CustomerServiceTest {
 
 	@Test
 	@DisplayName("로그인 실패 테스트 - 잘못된 비밀번호")
-	void login_WrongPassword() {
+	void 로그인_실패_비밀번호_틀림() {
 		// Given
 		when(customerRepository.findByEmail(EMAIL)).thenReturn(Optional.of(customer));
 		when(passwordEncoder.matches(NOT_REGISTED_PASSWORD, customer.getPassword())).thenReturn(false);
@@ -173,4 +181,100 @@ class CustomerServiceTest {
 			() -> customerService.login(EMAIL, NOT_REGISTED_PASSWORD));
 	}
 
+	@Test
+	@DisplayName("프로필 조회 성공 테스트")
+	void 프로필_조회_성공() {
+		// Given
+		when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(customer));
+		when(s3Service.generatePresignedUrl(URL_KEY + customer.getGender() + customer.getBodyType() + EXTENSION))
+			.thenReturn(EXPECTED_BODY_OBJECT_URL);
+
+		// When
+		GetCustomerResponse response = customerService.retrieveProfile(CUSTOMER_ID);
+
+		// Then
+		assertNotNull(response);
+		assertEquals(EMAIL, response.email());
+		assertEquals(NAME, response.name());
+		assertEquals(NICK_NAME, response.nickName());
+		assertEquals(AGE, response.age());
+		assertEquals(PHONE_NUMBER, response.phoneNumber());
+		assertEquals(EXPECTED_BODY_OBJECT_URL, response.bodyObjUrl());
+		verify(customerRepository).findById(CUSTOMER_ID);
+		verify(s3Service).generatePresignedUrl(URL_KEY + customer.getGender() + customer.getBodyType() + EXTENSION);
+	}
+
+	@Test
+	@DisplayName("프로필 조회 실패 테스트 - 존재하지 않는 사용자")
+	void 프로필_조회_실패() {
+		// Given
+		when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.empty());
+
+		// When & Then
+		assertThrows(CustomException.class, () -> customerService.retrieveProfile(CUSTOMER_ID));
+		verify(customerRepository).findById(CUSTOMER_ID);
+	}
+
+	@Test
+	@DisplayName("프로필 업데이트 성공 테스트")
+	void 프로필_업데이트_성공() {
+		// Given
+		ProfileUpdateRequest request = new ProfileUpdateRequest(
+			UPDATED_NAME,
+			UPDATED_NICK_NAME,
+			UPDATED_AGE,
+			UPDATED_EMAIL,
+			UPDATED_PHONE_NUMBER,
+			UPDATED_HEIGHT,
+			UPDATED_WEIGHT,
+			BODY_TYPE
+		);
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		doNothing().when(authService).update(EMAIL, UPDATED_EMAIL);
+
+		// When
+		customerService.updateProfile(CUSTOMER_ID, request);
+
+		// Then
+		assertEquals(UPDATED_EMAIL, customer.getEmail());
+		assertEquals(UPDATED_NAME, customer.getName());
+		assertEquals(UPDATED_NICK_NAME, customer.getNickName());
+		assertEquals(UPDATED_AGE, customer.getAge());
+		assertEquals(UPDATED_PHONE_NUMBER, customer.getPhoneNumber());
+		assertEquals(UPDATED_WEIGHT, customer.getWeight());
+		assertEquals(UPDATED_HEIGHT, customer.getHeight());
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(authService).update(EMAIL, UPDATED_EMAIL);
+	}
+
+	@Test
+	@DisplayName("ID로 고객 조회 성공 테스트")
+	void id로_고객_조회_성공() {
+		// Given
+		when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(customer));
+
+		// When
+		Customer foundCustomer = customerService.findById(CUSTOMER_ID);
+
+		// Then
+		assertNotNull(foundCustomer);
+		assertEquals(EMAIL, foundCustomer.getEmail());
+		assertEquals(NAME, foundCustomer.getName());
+		assertEquals(NICK_NAME, foundCustomer.getNickName());
+		assertEquals(AGE, foundCustomer.getAge());
+		assertEquals(PHONE_NUMBER, foundCustomer.getPhoneNumber());
+		verify(customerRepository).findById(CUSTOMER_ID);
+	}
+
+	@Test
+	@DisplayName("ID로 고객 조회 실패 테스트 - 존재하지 않는 사용자")
+	void id로_고객_조회_실패() {
+		// Given
+		when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.empty());
+
+		// When & Then
+		assertThrows(CustomException.class, () -> customerService.findById(CUSTOMER_ID));
+		verify(customerRepository).findById(CUSTOMER_ID);
+	}
 }
