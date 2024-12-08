@@ -4,6 +4,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import com.example.demo.customer.dto.request.AddAddressRequest;
+import com.example.demo.customer.dto.request.AddPaymentRequest;
+import com.example.demo.customer.dto.request.UpdateAddressRequest;
+import com.example.demo.customer.dto.request.UpdatePaymentRequest;
+import com.example.demo.customer.dto.response.GetAddressDetailResponse;
+import com.example.demo.customer.dto.response.GetAddressResponse;
+import com.example.demo.customer.dto.response.GetPaymentDetailResponse;
+import com.example.demo.customer.dto.response.GetPaymentResponse;
+import com.example.demo.customer.entity.Address;
+import com.example.demo.customer.entity.CardProvider;
+import com.example.demo.customer.entity.Payment;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +39,8 @@ import com.example.demo.customer.entity.Customer;
 import com.example.demo.customer.entity.Gender;
 import com.example.demo.customer.repository.CustomerRepository;
 import com.example.demo.util.TestResultLogger;
+
+import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,6 +85,10 @@ class CustomerServiceTest {
 	@Mock
 	private S3Service s3Service;
 	private Customer customer;
+	@Mock
+	private AddressService addressService;
+	@Mock
+	private PaymentService paymentService;
 
 	// 테스트용 Auth 객체 생성 헬퍼 메소드
 	private Auth createTestAuth(String refreshToken) {
@@ -276,5 +293,258 @@ class CustomerServiceTest {
 		// When & Then
 		assertThrows(CustomException.class, () -> customerService.findById(CUSTOMER_ID));
 		verify(customerRepository).findById(CUSTOMER_ID);
+	}
+
+	@Test
+	@DisplayName("고객의 주소 목록을 조회한다")
+	void 주소_목록_조회_성공() {
+		// Given
+		List<Address> addresses = List.of(
+				Address.builder()
+						.id(1L)
+						.name("집")
+						.recipient("홍길동")
+						.build()
+		);
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		when(addressService.findByCustomerAndDeletedAtIsNull(customer)).thenReturn(addresses);
+
+		// When
+		List<GetAddressResponse> responses = customerService.getAddresses(CUSTOMER_ID);
+
+		// Then
+		assertNotNull(responses);
+		assertEquals(1, responses.size());
+		assertEquals("집", responses.get(0).name());
+		assertEquals("홍길동", responses.get(0).recipient());
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(addressService).findByCustomerAndDeletedAtIsNull(customer);
+	}
+
+	@Test
+	@DisplayName("고객의 주소 상세 정보를 조회한다")
+	void 주소_상세_조회_성공() {
+		// Given
+		Long addressId = 1L;
+		Address address = Address.builder()
+				.id(addressId)
+				.name("집")
+				.recipient("홍길동")
+				.zipCode("12345")
+				.baseAddress("서울시 강남구")
+				.detailAddress("101동 101호")
+				.build();
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		when(addressService.findByIdAndCustomerAndDeletedAtIsNull(addressId, customer)).thenReturn(address);
+
+		// When
+		GetAddressDetailResponse response = customerService.getAddressDetail(CUSTOMER_ID, addressId);
+
+		// Then
+		assertNotNull(response);
+		assertEquals("집", response.name());
+		assertEquals("12345", response.zipCode());
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(addressService).findByIdAndCustomerAndDeletedAtIsNull(addressId, customer);
+	}
+
+	@Test
+	@DisplayName("새로운 주소를 추가한다")
+	void 주소_추가_성공() {
+		// Given
+		AddAddressRequest request = new AddAddressRequest(
+				"집",
+				"홍길동",
+				"12345",
+				"서울시 강남구",
+				"101동 101호"
+		);
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		doNothing().when(addressService).addAddress(customer, request);
+
+		// When
+		customerService.addAddress(CUSTOMER_ID, request);
+
+		// Then
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(addressService).addAddress(customer, request);
+	}
+
+	@Test
+	@DisplayName("주소를 수정한다")
+	void 주소_수정_성공() {
+		// Given
+		Long addressId = 1L;
+		Address address = Address.builder()
+				.id(addressId)
+				.build();
+		UpdateAddressRequest request = new UpdateAddressRequest(
+				addressId,
+				"회사",
+				"홍길동",
+				"54321",
+				"서울시 서초구",
+				"202동 202호"
+		);
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		when(addressService.findByIdAndCustomerAndDeletedAtIsNull(addressId, customer)).thenReturn(address);
+		doNothing().when(addressService).updateAddress(address, request);
+
+		// When
+		customerService.updateAddress(CUSTOMER_ID, request);
+
+		// Then
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(addressService).findByIdAndCustomerAndDeletedAtIsNull(addressId, customer);
+		verify(addressService).updateAddress(address, request);
+	}
+
+	@Test
+	@DisplayName("주소를 삭제한다")
+	void 주소_삭제_성공() {
+		// Given
+		Long addressId = 1L;
+		Address address = Address.builder()
+				.id(addressId)
+				.build();
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		when(addressService.findByIdAndCustomerAndDeletedAtIsNull(addressId, customer)).thenReturn(address);
+		doNothing().when(addressService).deleteAddress(address);
+
+		// When
+		customerService.deleteAddress(CUSTOMER_ID, addressId);
+
+		// Then
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(addressService).findByIdAndCustomerAndDeletedAtIsNull(addressId, customer);
+		verify(addressService).deleteAddress(address);
+	}
+
+	@Test
+	@DisplayName("고객의 결제 수단 목록을 조회한다")
+	void 결제수단_목록_조회_성공() {
+		// Given
+		List<Payment> payments = List.of(
+				Payment.builder()
+						.id(1L)
+						.cardNumber("1234-5678-9012-3456")
+						.cardProvider(CardProvider.LOTTE)
+						.build()
+		);
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		when(paymentService.findByCustomerAndDeletedAtIsNull(customer)).thenReturn(payments);
+
+		// When
+		List<GetPaymentResponse> responses = customerService.getPayments(CUSTOMER_ID);
+
+		// Then
+		assertNotNull(responses);
+		assertEquals(1, responses.size());
+		assertEquals("1234-5678-9012-3456", responses.get(0).cardNumber());
+		assertEquals(CardProvider.LOTTE, responses.get(0).cardProvider());
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(paymentService).findByCustomerAndDeletedAtIsNull(customer);
+	}
+
+	@Test
+	@DisplayName("결제 수단 상세 정보를 조회한다")
+	void 결제수단_상세_조회_성공() {
+		// Given
+		Long paymentId = 1L;
+		Payment payment = Payment.builder()
+				.id(paymentId)
+				.cardNumber("1234-5678-9012-3456")
+				.cardProvider(CardProvider.LOTTE)
+				.expiryDate("12/25")
+				.build();
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		when(paymentService.findByIdAndCustomerAndDeletedAtIsNull(paymentId, customer)).thenReturn(payment);
+
+		// When
+		GetPaymentDetailResponse response = customerService.getPaymentDetail(CUSTOMER_ID, paymentId);
+
+		// Then
+		assertNotNull(response);
+		assertEquals("1234-5678-9012-3456", response.cardNumber());
+		assertEquals(CardProvider.LOTTE, response.cardProvider());
+		assertEquals("12/25", response.expiryDate());
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(paymentService).findByIdAndCustomerAndDeletedAtIsNull(paymentId, customer);
+	}
+
+	@Test
+	@DisplayName("새로운 결제 수단을 추가한다")
+	void 결제수단_추가_성공() {
+		// Given
+		AddPaymentRequest request = new AddPaymentRequest(
+				"1234-5678-9012-3456",
+				CardProvider.LOTTE,
+				"12/25"
+		);
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		doNothing().when(paymentService).addPayment(customer, request);
+
+		// When
+		customerService.addPayment(CUSTOMER_ID, request);
+
+		// Then
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(paymentService).addPayment(customer, request);
+	}
+
+	@Test
+	@DisplayName("결제 수단을 수정한다")
+	void 결제수단_수정_성공() {
+		// Given
+		Long paymentId = 1L;
+		Payment payment = Payment.builder()
+				.id(paymentId)
+				.build();
+		UpdatePaymentRequest request = new UpdatePaymentRequest(
+				paymentId,
+				"9876-5432-1098-7654",
+				CardProvider.LOTTE,
+				"06/28"
+		);
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		when(paymentService.findByIdAndCustomerAndDeletedAtIsNull(paymentId, customer)).thenReturn(payment);
+		doNothing().when(paymentService).updatePayment(payment, request);
+
+		// When
+		customerService.updatePayment(CUSTOMER_ID, request);
+
+		// Then
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(paymentService).findByIdAndCustomerAndDeletedAtIsNull(paymentId, customer);
+		verify(paymentService).updatePayment(payment, request);
+	}
+
+	@Test
+	@DisplayName("결제 수단을 삭제한다")
+	void 결제수단_삭제_성공() {
+		// Given
+		Long paymentId = 1L;
+		Payment payment = Payment.builder()
+				.id(paymentId)
+				.build();
+
+		when(customerRepository.getReferenceById(CUSTOMER_ID)).thenReturn(customer);
+		when(paymentService.findByIdAndCustomerAndDeletedAtIsNull(paymentId, customer)).thenReturn(payment);
+		doNothing().when(paymentService).deletePayment(payment);
+
+		// When
+		customerService.deletePayment(CUSTOMER_ID, paymentId);
+
+		// Then
+		verify(customerRepository).getReferenceById(CUSTOMER_ID);
+		verify(paymentService).findByIdAndCustomerAndDeletedAtIsNull(paymentId, customer);
+		verify(paymentService).deletePayment(payment);
 	}
 }
